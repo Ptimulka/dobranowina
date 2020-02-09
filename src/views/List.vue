@@ -1,54 +1,56 @@
 <template>
   <v-container>
-    <v-card v-if="isLoading">
-        <v-card-text align="center" justify="center">
-          <v-progress-circular
-            class="my-5"
-            indeterminate color="primary"
-          ></v-progress-circular>
-          <h2 class="primary--text my-5">
-            Ładowanie pytań
-          </h2>
-      </v-card-text>
-    </v-card>
 
-    <v-expansion-panels multiple v-if="!isLoading">
-      <v-expansion-panel class="year-ep">
-        <v-expansion-panel-header>
-          <h2 class="display-2">2017</h2>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
+    <v-expansion-panels multiple>
+      <v-expansion-panel
+        class="year-ep"
+        v-for="questionsYear in questionsToLoad"
+        :key="questionsYear"
+      >
 
-          <v-expansion-panels multiple>
-            <v-expansion-panel
-              v-for="livestream in questions.allQuestions['q2017']['livestreams']"
-              :key="livestream.date"
-              class="livestream-ep"
-            >
-              <v-expansion-panel-header>
-                <h2 class="headline">{{ livestream.dateread }}</h2>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
+        <template v-if="!isLoading[questionsYear]">
+          <v-expansion-panel-header>
+            <h2 class="display-2">{{ questionsYear }}</h2>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
 
-                <v-expansion-panels multiple accordion>
-                  <v-expansion-panel
-                    v-for="question in livestream['questions']"
-                    :key="question.question"
-                  >
-                    <v-expansion-panel-header>
-                      <h2 class="title">{{ question.question }}</h2>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <span v-html="question.answer"></span>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
+            <v-expansion-panels multiple>
+              <v-expansion-panel
+                v-for="livestream in questions.getQuestions(questionsYear)['livestreams']"
+                :key="livestream.date"
+                class="livestream-ep"
+              >
+                <v-expansion-panel-header>
+                  <h2 class="headline">{{ livestream.dateread }}</h2>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
 
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
+                  <v-expansion-panels multiple accordion>
+                    <v-expansion-panel
+                      v-for="question in livestream['questions']"
+                      :key="question.question"
+                    >
+                      <v-expansion-panel-header>
+                        <h2 class="title">{{ question.question }}</h2>
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <span v-html="question.answer"></span>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
 
-        </v-expansion-panel-content>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+
+          </v-expansion-panel-content>
+        </template>
+
+        <v-skeleton-loader
+          v-else
+          type="card-heading"
+        ></v-skeleton-loader>
+
       </v-expansion-panel>
     </v-expansion-panels>
 
@@ -62,17 +64,23 @@ import QuestionsData from '@/questions/questions-data';
 export default {
   data() {
     return {
+      questionsToLoad: ['2017','2020'],
       questions: QuestionsData
     }
   },
   created() {
-    this.questions.loadQYear('q2017');
+    this.questionsToLoad.forEach(questionsYear => {
+      this.questions.loadYear(questionsYear);
+    });
   },
   methods: {
   },
   computed: {
     isLoading() {
-      return !this.questions.isLoaded('q2017');
+      return this.questionsToLoad.reduce((obj, questionsYear) => {
+         obj[questionsYear] = !this.questions.isLoaded(questionsYear)
+         return obj
+       }, {})
     }
   }
 }
