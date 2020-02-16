@@ -14,12 +14,12 @@
             ></v-text-field>
         </v-col>
         <v-col class="px-3" cols="12" sm="12" md="3">
-           <v-btn type="submit" :loading="isLoadingQuestions || isSearching" large block color="primary" class="my-2">Szukaj</v-btn>
+           <v-btn type="submit" :loading="isLoadingQuestions || isLoadingSearchDict || isSearching" large block color="primary" class="my-2">Szukaj</v-btn>
         </v-col>
       </v-row>
     </v-form>
 
-    <v-card v-for="question in searchResults" :key="question.question" class="my-5">
+    <v-card v-for="question in searchResult" :key="question.question" class="my-5">
       <v-card-title>{{ question.question }}</v-card-title>
       <v-card-subtitle>{{ question.date }}</v-card-subtitle>
       <v-card-text><span v-html="question.answer"></span></v-card-text>
@@ -32,6 +32,7 @@
 // import { search, suggest, regex } from 'puzzy-search'
 import { search, regex } from 'puzzy-search'
 import QuestionsData from '@/questions/questions-data';
+import SearchHelper from '@/questions/search-helper';
 
 export default {
   data() {
@@ -39,6 +40,7 @@ export default {
       searchQuery: "",
       questionsToLoad: ['2017','2020'],
       questions: QuestionsData,
+      searchHelper: SearchHelper,
       isSearching: false,
       searchResult: []
     }
@@ -47,13 +49,15 @@ export default {
     this.questionsToLoad.forEach(questionsYear => {
       this.questions.loadYear(questionsYear);
     });
+    this.searchHelper.init();
   },
   methods: {
     searchQuestions: function() {
-      if(!this.isLoading) {
-        console.log("searching for: " + this.searchQuery);
+      if(!this.isLoadingQuestions && !this.isLoadingSearchDict) {
+        this.searchHelper.searchQuestions(this.searchQuery, this.questions);
+
         this.isSearching = true;
-        this.searchResults = [];
+        this.searchResult = [];
 
         this.questionsToLoad.forEach(questionsYear => {
           this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
@@ -69,7 +73,7 @@ export default {
                 item['answer'] = question['answer'];
                 item['date'] = livestream['dateread'] + ' ' + questionsYear;
 
-                this.searchResults.push(item);
+                this.searchResult.push(item);
               }
 
             });
@@ -88,6 +92,9 @@ export default {
         else return !this.questions.isLoaded(questionsYear)
        }, false)
     },
+    isLoadingSearchDict() {
+      return !this.searchHelper.isLoaded();
+    }
 
   }
 }
