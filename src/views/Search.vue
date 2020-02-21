@@ -29,8 +29,6 @@
 </template>
 
 <script>
-// import { search, suggest, regex } from 'puzzy-search'
-import { search, regex } from 'puzzy-search'
 import QuestionsData from '@/questions/questions-data';
 import SearchHelper from '@/questions/search-helper';
 
@@ -54,7 +52,7 @@ export default {
   methods: {
     searchQuestions: function() {
       if(!this.isLoadingQuestions && !this.isLoadingSearchDict) {
-        this.searchHelper.searchQuestions(this.searchQuery, this.questions);
+        let regexps = this.searchHelper.searchQuestions(this.searchQuery);
 
         this.isSearching = true;
         this.searchResult = [];
@@ -62,22 +60,22 @@ export default {
         this.questionsToLoad.forEach(questionsYear => {
           this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
             livestream['questions'].forEach(question => {
-              if(search(this.searchQuery, question['question'])) {
-                console.log(question['question']);
-                console.log(regex(this.searchQuery));
-                let regr = question['question'].match(regex(this.searchQuery));
-                console.log(regr);
 
-                var item = {}
-                item['question'] = question['question'];
-                item['answer'] = question['answer'];
-                item['date'] = livestream['dateread'] + ' ' + questionsYear;
+              regexps.forEach(regexp => {
+                let res = question.question.match(regexp);
+                if(res != null) {
 
-                this.searchResult.push(item);
-              }
-
+                  var item = {}
+                  item['question'] = question['question'];
+                  item['answer'] = question['answer'];
+                  item['date'] = livestream['dateread'] + ' ' + questionsYear;
+                  if(!this.searchResult.some(it => it.question == item.question)) {
+                    this.searchResult.push(item);
+                    console.log(res);
+                  }
+                }
+              });
             });
-
           });
 
         });

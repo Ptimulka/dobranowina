@@ -35,7 +35,8 @@ var SearchHelper = {
       if(typeof arrOfArrs != 'undefined') {
         arrOfArrs.forEach(arr => {
           if(arr.includes(suffix)) {
-            arr.map(suf => prefix + suf).forEach(word => ret.push(word));
+            let resItem = { prefix: prefix, suffices: arr };
+            ret.push(resItem);
           }
         });
       }
@@ -43,26 +44,46 @@ var SearchHelper = {
         break;
     }
     if(ret.length == 0)
-      return [word];
+      return [{ prefix: word, suffices: [""] }];
     else {
-      ret.push(word);
-      let uniq = Array.from(new Set(ret));
-      return uniq;
+      return ret;
     }
   },
-  searchQuestions: function(query, questions) {
-
-    console.log(typeof questions);
+  searchQuestions: function(query) {
 
     if(!this.isLoaded())
       return;
 
     let words = query.toLowerCase().split(/[\s,.;]+/);
-    words.forEach(word => {
-      let res = this.searchWord(word);
-      console.log(word + "  |  " + res);
+    let allWordsResults = words.flatMap(word => {
+      return this.searchWord(word);
     });
 
+    let allWordsResultsReduced = allWordsResults.reduce(function(accumulator, currentValue) {
+
+      if(currentValue.prefix in accumulator) {
+          let existingSuffices = accumulator[currentValue.prefix];
+          let currentSuffices = currentValue.suffices;
+          let allSuffices = Array.from(new Set(existingSuffices.concat(currentSuffices)));
+          accumulator[currentValue.prefix] = allSuffices;
+      }
+      else {
+        accumulator[currentValue.prefix] = currentValue.suffices
+      }
+      return accumulator;
+    }, {});
+
+    console.log(JSON.stringify(allWordsResultsReduced));
+
+    let regexps = Object.keys(allWordsResultsReduced).map(key => {
+      let suffices = allWordsResultsReduced[key];
+      let sufficesJoined = suffices.join('|');
+      let regexp = key +"(" + sufficesJoined + ")";
+      return new RegExp(regexp, "i");
+    });
+
+    console.log(regexps);
+    return regexps;
   },
   isLoaded: function() {
     return this.searchDict != null;
