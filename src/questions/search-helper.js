@@ -40,8 +40,6 @@ var SearchHelper = {
           }
         });
       }
-      if(ret.length > 0)
-        break;
     }
     if(ret.length == 0)
       return [{ prefix: word, suffices: [""] }];
