@@ -1,6 +1,8 @@
 <template>
   <v-container>
 
+    <h5 class="text-center">Liczba wszystkich pytań: {{ allQUestionsNumber }} </h5>
+
     <v-form  @submit.prevent="searchQuestions">
       <v-row no-gutters class="mt-5">
         <v-col class="px-3" cols="12" sm="12" md="9">
@@ -11,6 +13,7 @@
               prepend-icon="mdi-magnify"
               class="my-1"
               v-model="searchQuery"
+              :disabled="isLoadingQuestions || isLoadingSearchDict"
             ></v-text-field>
         </v-col>
         <v-col class="px-3" cols="12" sm="12" md="3">
@@ -24,6 +27,8 @@
       <v-card-subtitle>{{ question.date }}</v-card-subtitle>
       <v-card-text><span v-html="question.answer"></span></v-card-text>
     </v-card>
+
+    <h5 class="text-center mt-5">{{ messageAtTheBottom }} </h5>
 
   </v-container>
 </template>
@@ -40,6 +45,7 @@ export default {
       questions: QuestionsData,
       searchHelper: SearchHelper,
       isSearching: false,
+      lastSearchNoResults: false,
       searchResult: []
     }
   },
@@ -80,6 +86,10 @@ export default {
 
         });
         this.isSearching = false;
+        if(this.searchResult.length == 0)
+          this.lastSearchNoResults = true;
+        else
+          this.lastSearchNoResults = false;
       }
     }
   },
@@ -92,6 +102,30 @@ export default {
     },
     isLoadingSearchDict() {
       return !this.searchHelper.isLoaded();
+    },
+    allQUestionsNumber() {
+      if(this.isLoadingQuestions)
+        return 0;
+      else {
+        let ret = 0;
+        this.questionsToLoad.forEach(questionsYear => {
+          this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
+            ret = ret + livestream['questions'].length;
+          });
+        });
+        return ret;
+      }
+    },
+    messageAtTheBottom() {
+      if(this.isSearching)
+        return "Szukam...";
+      else if(this.isLoadingQuestions || this.isLoadingSearchDict)
+        return "Ładowanie...";
+      else if(this.lastSearchNoResults)
+        return "Brak wyników";
+      else if(this.searchResult.length > 0)
+        return "Koniec wyników";
+      else return "";
     }
 
   }
