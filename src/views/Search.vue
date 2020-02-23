@@ -82,7 +82,6 @@ export default {
                     result['date'] = livestream.dateread + ' ' + questionsYear;
 
                     this.searchResult.push(result);
-                   console.log(result);
                   }
                 }
               });

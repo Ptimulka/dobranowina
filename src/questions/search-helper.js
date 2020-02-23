@@ -70,8 +70,6 @@ var SearchHelper = {
       return accumulator;
     }, {});
 
-    console.log(JSON.stringify(allWordsResultsReduced));
-
     let regexps = Object.keys(allWordsResultsReduced).map(key => {
       let suffices = allWordsResultsReduced[key];
       let sufficesJoined = suffices.join('|');
@@ -79,7 +77,6 @@ var SearchHelper = {
       return new RegExp(regexp, "i");
     });
 
-    console.log(regexps);
     return regexps;
   },
   isLoaded: function() {
