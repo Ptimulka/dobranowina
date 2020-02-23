@@ -22,10 +22,10 @@
       </v-row>
     </v-form>
 
-    <v-card v-for="question in searchResult" :key="question.question" class="my-5">
-      <v-card-title>{{ question.question }}</v-card-title>
-      <v-card-subtitle>{{ question.date }}</v-card-subtitle>
-      <v-card-text><span v-html="question.answer"></span></v-card-text>
+    <v-card v-for="result in searchResult" :key="result.id" class="my-5">
+       <v-card-title><span v-html="result.question"></span></v-card-title>
+       <v-card-subtitle>{{ result.date }}</v-card-subtitle>
+      <v-card-text><span v-html="result.answer"></span></v-card-text>
     </v-card>
 
     <h5 class="text-center mt-5">{{ messageAtTheBottom }} </h5>
@@ -65,19 +65,24 @@ export default {
 
         this.questionsToLoad.forEach(questionsYear => {
           this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
-            livestream['questions'].forEach(question => {
-
+            livestream['questions'].forEach((question, index) => {
+              let id = livestream.date + "_" + index;
               regexps.forEach(regexp => {
-                let res = question.question.match(regexp);
-                if(res != null) {
+                if(!this.searchResult.some(it => it.id == id)) {
+                  let res = question.question.match(regexp);
+                  if(res != null) {
+                    let result = {};
+                    result["id"] = id;
+                    result['question'] = question.question.substr(0, res.index) +
+                                          '<span class="highlightText">' +
+                                          res[0] +
+                                          '</span>' +
+                                          question.question.substr(res.index + res[0].length);
+                    result['answer'] = question.answer;
+                    result['date'] = livestream.dateread + ' ' + questionsYear;
 
-                  var item = {}
-                  item['question'] = question['question'];
-                  item['answer'] = question['answer'];
-                  item['date'] = livestream['dateread'] + ' ' + questionsYear;
-                  if(!this.searchResult.some(it => it.question == item.question)) {
-                    this.searchResult.push(item);
-                    console.log(res);
+                    this.searchResult.push(result);
+                   console.log(result);
                   }
                 }
               });
@@ -131,3 +136,8 @@ export default {
   }
 }
 </script>
+<style>
+    .highlightText {
+        background: yellow;
+    }
+</style>

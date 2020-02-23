@@ -3,7 +3,6 @@ var SearchHelper = {
   init: function() {
     if(!this.isLoaded()) {
       this.dictImport().then(x => {
-        // this.searchDict = this.prepareDict(x);
         this.searchDict = x;
       });
     }
@@ -52,7 +51,7 @@ var SearchHelper = {
     if(!this.isLoaded())
       return;
 
-    let words = query.toLowerCase().split(/[\s,.;]+/);
+    let words = query.toLowerCase().split(/[\s,.;]+/).filter(word => word.length>2);
     let allWordsResults = words.flatMap(word => {
       return this.searchWord(word);
     });
