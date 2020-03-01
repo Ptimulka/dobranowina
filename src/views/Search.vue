@@ -13,11 +13,11 @@
               prepend-icon="mdi-magnify"
               class="my-1"
               v-model="searchQuery"
-              :disabled="isLoadingQuestions || isLoadingSearchDict"
+              :disabled="isLoadingQuestions"
             ></v-text-field>
         </v-col>
         <v-col class="px-3" cols="12" sm="12" md="3">
-           <v-btn type="submit" :loading="isLoadingQuestions || isLoadingSearchDict || isSearching" large block color="primary" class="my-2">Szukaj</v-btn>
+           <v-btn type="submit" :loading="isLoadingQuestions || isSearching" large block color="primary" class="my-2">Szukaj</v-btn>
         </v-col>
       </v-row>
     </v-form>
@@ -53,48 +53,47 @@ export default {
     this.questionsToLoad.forEach(questionsYear => {
       this.questions.loadYear(questionsYear);
     });
-    this.searchHelper.init();
   },
   methods: {
     searchQuestions: function() {
-      if(!this.isLoadingQuestions && !this.isLoadingSearchDict) {
-        let regexps = this.searchHelper.searchQuestions(this.searchQuery);
-
+      if(!this.isLoadingQuestions) {
         this.isSearching = true;
         this.searchResult = [];
 
-        this.questionsToLoad.forEach(questionsYear => {
-          this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
-            livestream['questions'].forEach((question, index) => {
-              let id = livestream.date + "_" + index;
-              regexps.forEach(regexp => {
-                if(!this.searchResult.some(it => it.id == id)) {
-                  let res = question.question.match(regexp);
-                  if(res != null) {
-                    let result = {};
-                    result["id"] = id;
-                    result['question'] = question.question.substr(0, res.index) +
-                                          '<span class="highlightText">' +
-                                          res[0] +
-                                          '</span>' +
-                                          question.question.substr(res.index + res[0].length);
-                    result['answer'] = question.answer;
-                    result['date'] = livestream.dateread + ' ' + questionsYear;
+        this.searchHelper.getRegexpsForQuery(this.searchQuery, this.continueSearching);
+      }
+    },
+    continueSearching: function(regexps) {
+      this.questionsToLoad.forEach(questionsYear => {
+        this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
+          livestream['questions'].forEach((question, index) => {
+            let id = livestream.date + "_" + index;
+            regexps.forEach(regexp => {
+              if(!this.searchResult.some(it => it.id == id)) {
+                let res = question.question.match(regexp);
+                if(res != null) {
+                  let result = {};
+                  result["id"] = id;
+                  result['question'] = question.question.substr(0, res.index) +
+                                        '<span class="highlightText">' +
+                                        res[0] +
+                                        '</span>' +
+                                        question.question.substr(res.index + res[0].length);
+                  result['answer'] = question.answer;
+                  result['date'] = livestream.dateread + ' ' + questionsYear;
 
-                    this.searchResult.push(result);
-                  }
+                  this.searchResult.push(result);
                 }
-              });
+              }
             });
           });
-
         });
-        this.isSearching = false;
-        if(this.searchResult.length == 0)
-          this.lastSearchNoResults = true;
-        else
-          this.lastSearchNoResults = false;
-      }
+      });
+      this.isSearching = false;
+      if(this.searchResult.length == 0)
+        this.lastSearchNoResults = true;
+      else
+        this.lastSearchNoResults = false;
     }
   },
   computed: {
@@ -103,9 +102,6 @@ export default {
         if(isLoading) return true;
         else return !this.questions.isLoaded(questionsYear)
        }, false)
-    },
-    isLoadingSearchDict() {
-      return !this.searchHelper.isLoaded();
     },
     allQUestionsNumber() {
       if(this.isLoadingQuestions)
@@ -123,7 +119,7 @@ export default {
     messageAtTheBottom() {
       if(this.isSearching)
         return "Szukam...";
-      else if(this.isLoadingQuestions || this.isLoadingSearchDict)
+      else if(this.isLoadingQuestions)
         return "Ładowanie...";
       else if(this.lastSearchNoResults)
         return "Brak wyników";
