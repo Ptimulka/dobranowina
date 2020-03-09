@@ -22,7 +22,7 @@
       </v-row>
     </v-form>
 
-    <v-card v-for="result in searchResult" :key="result.id" class="my-5">
+    <v-card v-for="result in searchResultSorted" :key="result.id" class="my-5">
        <v-card-title><span v-html="result.question"></span></v-card-title>
        <v-card-subtitle>{{ result.date }}</v-card-subtitle>
       <v-card-text><span v-html="result.answer"></span></v-card-text>
@@ -63,29 +63,39 @@ export default {
         this.searchHelper.getRegexpsForQuery(this.searchQuery, this.continueSearching);
       }
     },
-    continueSearching: function(regexps) {
+    makeHighlightedTextFromTextAndMatches: function(text, matches) {
+      var position = 0;
+      let ret = "";
+      for (let match of matches) {
+        ret += text.substr(position, match.index - position) +
+              '<span class="highlightText">' +
+              match[0] +
+              '</span>';
+        position = match.index + match[0].length;
+      }
+      ret += text.substr(position);
+      return ret;
+    },
+    continueSearching: function(regexp) {
       this.questionsToLoad.forEach(questionsYear => {
         this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
           livestream['questions'].forEach((question, index) => {
             let id = livestream.date + "_" + index;
-            regexps.forEach(regexp => {
-              if(!this.searchResult.some(it => it.id == id)) {
-                let res = question.question.match(regexp);
-                if(res != null) {
-                  let result = {};
-                  result["id"] = id;
-                  result['question'] = question.question.substr(0, res.index) +
-                                        '<span class="highlightText">' +
-                                        res[0] +
-                                        '</span>' +
-                                        question.question.substr(res.index + res[0].length);
-                  result['answer'] = question.answer;
-                  result['date'] = livestream.dateread + ' ' + questionsYear;
 
-                  this.searchResult.push(result);
-                }
+            let matches = [...question.question.matchAll(regexp)];
+            if(matches.length > 0) {
+              let score = matches.reduce((score, match) => {
+                return score += match[0].length;
+              },0);
+              let result = {
+                id: id,
+                question: this.makeHighlightedTextFromTextAndMatches(question.question, matches),
+                answer: question.answer,
+                date: livestream.dateread + ' ' + questionsYear,
+                score: score
               }
-            });
+              this.searchResult.push(result);
+            }
           });
         });
       });
@@ -115,6 +125,10 @@ export default {
         });
         return ret;
       }
+    },
+    searchResultSorted() {
+      let ret = [...this.searchResult];
+      return ret.sort((a, b) => b.score - a.score);
     },
     messageAtTheBottom() {
       if(this.isSearching)

@@ -42,7 +42,10 @@ var SearchHelper = {
           return new RegExp(regexp, "i");
         });
 
-        continueSearchingCallback(regexps);
+        let regexpsMerged = regexps.reduce(function(previousValue, currentValue) {
+          return new RegExp(previousValue.source + "|" + currentValue.source, "ig");
+        });
+        continueSearchingCallback(regexpsMerged);
       });
 
     }).on("error", (err) => {
