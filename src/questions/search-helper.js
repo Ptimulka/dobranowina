@@ -7,6 +7,10 @@ var SearchHelper = {
   getRegexpsForQuery: function(query, continueSearchingCallback) {
 
     let words = query.toLowerCase().split(/[\s,.;]+/).filter(word => word.length>2);
+    if(words.length == 0) {
+      continueSearchingCallback(null);
+      return;
+    }
     let allWordsStringWithCommas = words.join(',');
 
      https.get(familiesUrl + allWordsStringWithCommas, (resp) => {
@@ -39,7 +43,7 @@ var SearchHelper = {
           let suffices = allWordsResultsReduced[key];
           let sufficesJoined = suffices.join('|');
           let regexp = key +"(" + sufficesJoined + ")";
-          return new RegExp(regexp, "i");
+          return new RegExp(regexp, "ig");
         });
 
         let regexpsMerged = regexps.reduce(function(previousValue, currentValue) {
@@ -51,7 +55,7 @@ var SearchHelper = {
     }).on("error", (err) => {
       console.log("Error: " + err.message);
       let regexps = words.map(word => {
-        return new RegExp(word, "i");
+        return new RegExp(word, "ig");
       })
       continueSearchingCallback(regexps);
     });
