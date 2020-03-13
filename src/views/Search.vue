@@ -24,7 +24,10 @@
 
     <v-card v-for="result in searchResultSorted" :key="result.id" class="my-5">
        <v-card-title><span v-html="result.question"></span></v-card-title>
-       <v-card-subtitle>{{ result.date }}</v-card-subtitle>
+        <v-card-subtitle>
+          {{ result.date }}
+          <a :href="result.timelink" v-if="result.timelink">{{ result.timelink }}</a>
+        </v-card-subtitle>
       <v-card-text><span v-html="result.answer"></span></v-card-text>
     </v-card>
 
@@ -91,6 +94,7 @@ export default {
                 id: id,
                 question: this.makeHighlightedTextFromTextAndMatches(question.question, matches),
                 answer: question.answer,
+                timelink: question.timelink,
                 date: livestream.dateread + ' ' + questionsYear,
                 score: score
               }
