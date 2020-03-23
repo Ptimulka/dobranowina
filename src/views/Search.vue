@@ -20,6 +20,15 @@
            <v-btn type="submit" :loading="isLoadingQuestions || isSearching" large block color="primary" class="my-2">Szukaj</v-btn>
         </v-col>
       </v-row>
+      <v-row no-gutters class="mt-1">
+        <v-col class="px-3" cols="12" sm="6" md="4">
+          <v-checkbox v-model="searchAlsoInAnswers" label="Szukaj także w odpowiedziach"></v-checkbox>
+        </v-col>
+        <v-col class="px-3" cols="12" sm="6" md="4">
+          <v-checkbox v-model="searchExactPhase" label="Szukaj dokładnej frazy"></v-checkbox>
+        </v-col>
+        <v-col cols="12" sm="3" md="3"></v-col>
+      </v-row>
     </v-form>
 
     <v-card v-for="result in searchResultSorted" :key="result.id" class="my-5">
@@ -44,6 +53,8 @@ export default {
   data() {
     return {
       searchQuery: "",
+      searchAlsoInAnswers: false,
+      searchExactPhase: false,
       questionsToLoad: ['2017','2020'],
       questions: QuestionsData,
       searchHelper: SearchHelper,
@@ -63,7 +74,7 @@ export default {
         this.isSearching = true;
         this.searchResult = [];
 
-        this.searchHelper.getRegexpsForQuery(this.searchQuery, this.continueSearching);
+        this.searchHelper.getRegexpsForQuery(this.searchQuery, this.searchExactPhase, this.continueSearching);
       }
     },
     makeHighlightedTextFromTextAndMatches: function(text, matches) {
@@ -86,17 +97,24 @@ export default {
             let id = livestream.date + "_" + index;
 
             let matches = [...question.question.matchAll(regexp)];
-            if(matches.length > 0) {
+            var matchesAnswer = []
+            if(this.searchAlsoInAnswers) {
+              matchesAnswer = [...question.answer.matchAll(regexp)];
+            }
+            if(matches.length > 0 || (this.searchAlsoInAnswers && matchesAnswer.length > 0)) {
               let score = matches.reduce((score, match) => {
                 return score += match[0].length;
               },0);
+              let scoreAnswer = matchesAnswer.reduce((score, match) => {
+                return score += match[0].length;
+              },0) / 2;
               let result = {
                 id: id,
                 question: this.makeHighlightedTextFromTextAndMatches(question.question, matches),
-                answer: question.answer,
+                answer: this.makeHighlightedTextFromTextAndMatches(question.answer, matchesAnswer),
                 timelink: question.timelink,
                 date: livestream.dateread + ' ' + questionsYear,
-                score: score
+                score: score + scoreAnswer
               }
               this.searchResult.push(result);
             }

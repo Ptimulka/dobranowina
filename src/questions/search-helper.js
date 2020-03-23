@@ -4,7 +4,12 @@ const familiesUrl = 'https://polishwordfamilies.herokuapp.com/wordfamilies/';
 
 var SearchHelper = {
 
-  getRegexpsForQuery: function(query, continueSearchingCallback) {
+  getRegexpsForQuery: function(query, searchExactPhase, continueSearchingCallback) {
+
+    if(searchExactPhase) {
+        continueSearchingCallback(new RegExp(query, "ig"));
+        return;
+    }
 
     let words = query.toLowerCase().split(/[\s,.;]+/).filter(word => word.length>2);
     if(words.length == 0) {
