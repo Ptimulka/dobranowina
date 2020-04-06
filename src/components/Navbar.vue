@@ -55,7 +55,8 @@ export default {
       drawer: false,
       links: [
         { icon: 'mdi-magnify', text: 'Szukaj', route: '/' },
-        { icon: 'mdi-format-list-bulleted', text: 'Lista pytań', route: '/list' }
+        { icon: 'mdi-format-list-bulleted', text: 'Lista pytań', route: '/list' },
+        { icon: 'mdi-hand-right', text: 'Chcesz pomóc?', route: '/iwillhelp' }
       ],
     }
   },

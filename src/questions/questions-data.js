@@ -1,8 +1,11 @@
+import todoLivestreams from "@/assets/questions/todo.json";
+
 var QuestionsData = {
   imports: {
     q2017: () => import('@/assets/questions/2017.json'),
     q2020: () => import('@/assets/questions/2020.json'),
   },
+  todos: todoLivestreams,
   loadYear: function(year) {
     let qyear = 'q' + year;
     if(!this.isLoaded(year)) {
