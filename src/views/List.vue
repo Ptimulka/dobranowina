@@ -24,7 +24,7 @@
                   <h2 class="headline">{{ livestream.dateread }}</h2>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-
+                  <v-btn :href="livestream.link" text large color="primary" class="my-2"><v-icon>mdi-facebook</v-icon>Obejrzyj</v-btn>
                   <v-expansion-panels multiple accordion>
                     <v-expansion-panel
                       v-for="question in livestream['questions']"

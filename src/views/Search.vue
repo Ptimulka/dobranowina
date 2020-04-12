@@ -36,6 +36,7 @@
         <v-card-subtitle>
           {{ result.date }}
           <a :href="result.timelink" v-if="result.timelink">{{ result.timelink }}</a>
+          <a :href="result.link" v-else>{{ result.link }}</a>
         </v-card-subtitle>
       <v-card-text><span v-html="result.answer"></span></v-card-text>
     </v-card>
@@ -113,6 +114,7 @@ export default {
                 question: this.makeHighlightedTextFromTextAndMatches(question.question, matches),
                 answer: this.makeHighlightedTextFromTextAndMatches(question.answer, matchesAnswer),
                 timelink: question.timelink,
+                link: livestream.link,
                 date: livestream.dateread + ' ' + questionsYear,
                 score: score + scoreAnswer
               }
