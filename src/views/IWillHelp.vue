@@ -9,7 +9,7 @@
       <h3 class="py-5 px-5 subtitle-2 text-center">Lista linków do livestreamów, które jeszcze nie zostały spisane:</h3>
       <template v-for="livestream in todoLivestreams">
         <h4 class="pt-5 subtitle-2 text-center" :key="livestream.dateread">{{ livestream.dateread }}</h4>
-        <h4 class="pb-5 subtitle-2 text-center" :key="livestream.link"><a href="livestream.link">{{ livestream.link }}</a></h4>
+        <h4 class="pb-5 subtitle-2 text-center" :key="livestream.link"><a :href="livestream.link">{{ livestream.link }}</a></h4>
       </template>
       <h1 class="py-5 title text-center">2. Poprawianie błędów</h1>
       <h3 class="py-5 px-5 subtitle-2 text-center">Widzisz jakiś błąd, literówkę, nieścisłość? Zgłoś to!</h3>
