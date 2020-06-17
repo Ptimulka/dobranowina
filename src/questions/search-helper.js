@@ -11,7 +11,11 @@ var SearchHelper = {
         return;
     }
 
-    let words = query.toLowerCase().split(/[\s,.;]+/).filter(word => word.length>2);
+    let stopwords = ["czy", "kto", "jak"];
+
+    let words = query.toLowerCase().split(/[\s,.;]+/).
+      filter(word => word.length>2).
+      filter(word => !stopwords.includes(word));
     if(words.length == 0) {
       continueSearchingCallback(null);
       return;
@@ -46,7 +50,8 @@ var SearchHelper = {
 
         let regexps = Object.keys(allWordsResultsReduced).map(key => {
           let suffices = allWordsResultsReduced[key];
-          let sufficesJoined = suffices.join('|');
+          let sufficesSortedFromLongest = suffices.sort((a, b) => b.length - a.length);
+          let sufficesJoined = sufficesSortedFromLongest.join('|');
           let regexp = key +"(" + sufficesJoined + ")";
           return new RegExp(regexp, "ig");
         });

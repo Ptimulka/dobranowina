@@ -162,7 +162,7 @@ export default {
       else if(this.lastSearchNoResults)
         return "Brak wyników";
       else if(this.searchResult.length > 0)
-        return "Koniec wyników";
+        return "Koniec, znaleziono wyników: " + this.searchResult.length;
       else return "";
     }
 
