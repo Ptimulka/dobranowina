@@ -5,7 +5,7 @@
       <h1 class="py-5 headline text-center">Oto sposoby jakimi możesz to zrobić:</h1>
 
       <h1 class="py-5 title text-center">1. Spisywanie pytań z livestreamów</h1>
-      <h3 class="py-5 px-5 subtitle-2 text-center">Możesz obejrzeć jeden z livestreamów Mikołaja i spisać pytania na które on odpowiada. Najlepiej żebyś spisał także jego odpowiedzi, przynajmniej  w skróconej formie, ale jeśli nie masz dużo czasu to wystarczą same pytania.</h3>
+      <h3 class="py-5 px-5 subtitle-2 text-center">Możesz obejrzeć jeden z livestreamów Mikołaja i spisać pytania na które on odpowiada a także linki czasowe do tych pytań. Najlepiej żebyś spisał także jego odpowiedzi, przynajmniej  w skróconej formie, ale jeśli nie masz dużo czasu to wystarczą same pytania.</h3>
 
       <v-row no-gutters justify="center">
         <v-col cols="12" xs="12" sm="6">
