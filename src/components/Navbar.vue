@@ -57,6 +57,7 @@ export default {
         { icon: 'mdi-magnify', text: 'Szukaj', route: '/' },
         { icon: 'mdi-format-list-bulleted', text: 'Lista pytań', route: '/list' },
         { icon: 'mdi-hand-right', text: 'Pomogę!', route: '/iwillhelp' },
+        { icon: 'mdi-help-circle', text: 'FAQ', route: '/faq' },
         { icon: 'mdi-message-reply-text', text: 'Kontakt', route: '/contact' }
       ],
     }
