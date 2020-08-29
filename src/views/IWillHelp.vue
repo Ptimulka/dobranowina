@@ -29,7 +29,7 @@
       <h3 class="py-5 px-5 subtitle-2 text-center">Widzisz jakiś błąd, literówkę, nieścisłość? Zgłoś to!</h3>
 
       <h1 class="py-5 title text-center">3. Dodawanie linków czasowych</h1>
-      <h3 class="py-5 px-5 subtitle-2 text-center">Obecnie większość pytań ma linki tylko do całych livestreamów, a przydałyby się linki do konretnych punktów czasowych.</h3>
+      <h3 class="py-5 px-5 subtitle-2 text-center">Obecnie większość pytań ma linki tylko do całych livestreamów, a przydałyby się linki do konkretnych punktów czasowych.</h3>
 
     </v-card>
   </v-container>

@@ -27,9 +27,10 @@ export default {
     return {
       faqs: [
         { question: "Co to jest za strona?", answer: "Strona jest zbiorem pytań i odpowiedzi, które były zadawane przez internautów Mikołajowi - youtuberowi z kanału Dobra Nowina - podczas jego livestreamów na Facebooku albo Youtubie." },
-        { question: "Dlaczego brakuje pytań z livestreamów np. z lat 2018 i 2019?", answer: "Niektórzych pytań i odpowiedzi jeszcze nie zdążyłam spisać." },
+        { question: "Dlaczego brakuje livestreamów np. z lat 2018 i 2019?", answer: "Niektórzych pytań i odpowiedzi jeszcze nie zdążyłam spisać." },
         { question: "Co oznacza napis [Skrót] w odpowiedziach?", answer: "Oznacza, że wypowiedź Mikołaja była dłuższa, ale spisałam ją fragmentarycznie. Żeby poznać całą odpowiedź należy samemu ją odsłuchać klikając w link przy pytaniu." },
-        { question: "Dlaczego wyszkukiwanie tak długo trwa?", answer: "Ponieważ szukane są inne formy wpisanych słów aby wyniki były pełne i dokładniejsze. Można zaznaczyć \"Szukaj dokładnej frazy\" aby szukanie było szybsze." }
+        { question: "Dlaczego wyszukiwanie tak długo trwa?", answer: "Ponieważ szukane są inne formy wpisanych słów aby wyniki były pełne i dokładniejsze. Można zaznaczyć \"Szukaj dokładnej frazy\" aby szukanie było szybsze." },
+        { question: "Czy spisywane są wszystkie pytania?", answer: "Czasem mogę nie spisać pytania niechcący, ale czasem specjalnie je pomijam, gdy pytanie dotyczy życia prywatnego Mikołaja, gdy pytanie dotyczy szczegółowej sytuacji pytającego lub gdy odpowiedź Mikołaja to \"nie wiem\"." }
       ]
     }
   }
