@@ -107,7 +107,6 @@ export default {
         this.isSearching = false;
         return;
       }
-
       this.searchResult = [];
       this.questionsToLoad.forEach(questionsYear => {
         this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
@@ -196,5 +195,8 @@ export default {
 <style>
     .highlightText {
         background: yellow;
+    }
+    .v-card__text, .v-card__title {
+        word-break: normal !important;
     }
 </style>
