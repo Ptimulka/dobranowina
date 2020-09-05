@@ -13,11 +13,16 @@
               prepend-icon="mdi-magnify"
               class="my-1"
               v-model="searchQuery"
-              :disabled="isLoadingQuestions"
+              :disabled="isLoadingQuestions || isSearching"
             ></v-text-field>
         </v-col>
         <v-col class="px-3" cols="12" sm="12" md="3">
-           <v-btn type="submit" :loading="isLoadingQuestions || isSearching" large block color="primary" class="my-2">Szukaj</v-btn>
+           <v-btn
+            type="submit"
+            :loading="isLoadingQuestions"
+            large block color="primary"
+            class="my-2">
+            {{ buttonText }}</v-btn>
         </v-col>
       </v-row>
       <v-row no-gutters class="mt-1">
@@ -61,6 +66,7 @@ export default {
       searchHelper: SearchHelper,
       isSearching: false,
       lastSearchNoResults: false,
+      lastSearchCanceled: false,
       searchResult: []
     }
   },
@@ -71,10 +77,15 @@ export default {
   },
   methods: {
     searchQuestions: function() {
-      if(!this.isLoadingQuestions) {
+      if(this.isSearching) {
+        this.isSearching = false;
+        this.searchResult = [];
+        this.lastSearchCanceled = true;
+      }
+      else if(!this.isLoadingQuestions) {
         this.isSearching = true;
         this.searchResult = [];
-
+        this.lastSearchCanceled = false;
         this.searchHelper.getRegexpsForQuery(this.searchQuery, this.searchExactPhase, this.continueSearching);
       }
     },
@@ -92,6 +103,12 @@ export default {
       return ret;
     },
     continueSearching: function(regexp) {
+      if(this.lastSearchCanceled) {
+        this.isSearching = false;
+        return;
+      }
+
+      this.searchResult = [];
       this.questionsToLoad.forEach(questionsYear => {
         this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
           livestream['questions'].forEach((question, index) => {
@@ -157,6 +174,8 @@ export default {
     messageAtTheBottom() {
       if(this.isSearching)
         return "Szukam...";
+      else if(this.lastSearchCanceled)
+        return "Szukanie anulowane"
       else if(this.isLoadingQuestions)
         return "Ładowanie...";
       else if(this.lastSearchNoResults)
@@ -164,6 +183,11 @@ export default {
       else if(this.searchResult.length > 0)
         return "Koniec, znaleziono wyników: " + this.searchResult.length;
       else return "";
+    },
+    buttonText() {
+      if(this.isSearching)
+        return "Anuluj";
+      else return "Szukaj"
     }
 
   }
