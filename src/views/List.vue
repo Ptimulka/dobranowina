@@ -24,7 +24,7 @@
                   <h2 class="headline">{{ livestream.dateread }}</h2>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-
+                  <v-btn :href="livestream.link" text large class="my-2"><v-icon>mdi-play</v-icon>Obejrzyj</v-btn>
                   <v-expansion-panels multiple accordion>
                     <v-expansion-panel
                       v-for="question in livestream['questions']"
@@ -34,7 +34,12 @@
                         <h2 class="title">{{ question.question }}</h2>
                       </v-expansion-panel-header>
                       <v-expansion-panel-content>
-                        <span v-html="question.answer"></span>
+                        <div class="px-4">
+                          <h4 class="pb-5" v-if="question.timelink">
+                            <a :href="question.timelink">{{ question.timelink }}</a>
+                          </h4>
+                          <span v-html="question.answer"></span>
+                        </div>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
