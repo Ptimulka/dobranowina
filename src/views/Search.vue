@@ -27,10 +27,16 @@
       </v-row>
       <v-row no-gutters class="mt-1">
         <v-col class="px-3" cols="12" sm="6" md="4">
-          <v-checkbox v-model="searchAlsoInAnswers" label="Szukaj także w odpowiedziach"></v-checkbox>
+          <v-checkbox v-model="searchAlsoInAnswers"
+            label="Szukaj także w odpowiedziach"
+            :disabled="isLoadingQuestions || isSearching"
+          ></v-checkbox>
         </v-col>
         <v-col class="px-3" cols="12" sm="6" md="4">
-          <v-checkbox v-model="searchExactPhase" label="Szukaj dokładnej frazy"></v-checkbox>
+          <v-checkbox v-model="searchExactPhase"
+             label="Szukaj dokładnej frazy"
+             :disabled="isLoadingQuestions || isSearching"
+          ></v-checkbox>
         </v-col>
         <v-col cols="12" sm="3" md="3"></v-col>
       </v-row>
@@ -48,6 +54,22 @@
 
     <h5 class="text-center mt-5">{{ messageAtTheBottom }} </h5>
 
+    <v-row class="mt-5">
+      <div class="text-center">
+        <h5 class="subtitle-2">Słowa najczęściej pojawiające się w pytaniach:</h5>
+        <v-btn v-for="word in topWords"
+          :key="word"
+          elevation="1"
+          outlined
+          x-small
+          class="ma-1"
+          color="primary"
+          :disabled="isLoadingQuestions || isSearching"
+          @click.prevent="topWordsButtonPressed(word)"
+        >{{ word }}</v-btn>
+      </div>
+    </v-row>
+
   </v-container>
 </template>
 
@@ -63,6 +85,7 @@ export default {
       searchExactPhase: false,
       questionsToLoad: ['2017','2020'],
       questions: QuestionsData,
+      topWords: QuestionsData.topWords.topwords,
       searchHelper: SearchHelper,
       isSearching: false,
       lastSearchNoResults: false,
@@ -88,6 +111,10 @@ export default {
         this.lastSearchCanceled = false;
         this.searchHelper.getRegexpsForQuery(this.searchQuery, this.searchExactPhase, this.continueSearching);
       }
+    },
+    topWordsButtonPressed: function(word) {
+      this.searchQuery = word;
+      this.searchQuestions();
     },
     makeHighlightedTextFromTextAndMatches: function(text, matches) {
       var position = 0;
