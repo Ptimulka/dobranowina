@@ -38,6 +38,16 @@
              :disabled="isLoadingQuestions || isSearching"
           ></v-checkbox>
         </v-col>
+        <v-col class="px-3" cols="12" sm="6" md="4">
+          <v-select
+            v-model="sortBy"
+            :items="sortByItems"
+            item-text="sortByText"
+            item-value="abbr"
+            label="Sortuj:"
+            return-object
+          ></v-select>
+        </v-col>
         <v-col cols="12" sm="3" md="3"></v-col>
       </v-row>
     </v-form>
@@ -83,6 +93,12 @@ export default {
       searchQuery: "",
       searchAlsoInAnswers: false,
       searchExactPhase: false,
+      sortBy: { sortByText: 'Od najtrafniejszych', abbr: 'best' },
+      sortByItems: [
+        { sortByText: 'Od najtrafniejszych', abbr: 'best' },
+        { sortByText: 'Od najnowszych', abbr: 'latest' },
+        { sortByText: 'Od najstarszych', abbr: 'oldest' },
+      ],
       questionsToLoad: ['2017','2020'],
       questions: QuestionsData,
       topWords: QuestionsData.topWords.topwords,
@@ -159,6 +175,7 @@ export default {
                 timelink: question.timelink,
                 link: livestream.link,
                 date: livestream.dateread + ' ' + questionsYear,
+                dateSort: livestream.date,
                 score: score + scoreAnswer
               }
               this.searchResult.push(result);
@@ -195,7 +212,14 @@ export default {
     },
     searchResultSorted() {
       let ret = [...this.searchResult];
-      return ret.sort((a, b) => b.score - a.score);
+
+      if(this.sortBy.abbr == "best")
+        return ret.sort((a, b) => b.score - a.score);
+      else if(this.sortBy.abbr == "latest")
+        return ret.sort((a, b) => b.dateSort.localeCompare(a.dateSort));
+      else if(this.sortBy.abbr == "oldest")
+        return ret.sort((a, b) => a.dateSort.localeCompare(b.dateSort));
+      else return ret.sort((a, b) => b.score - a.score);
     },
     messageAtTheBottom() {
       if(this.isSearching)
