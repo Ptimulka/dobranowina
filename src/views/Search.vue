@@ -45,6 +45,7 @@
             item-text="sortByText"
             item-value="abbr"
             label="Sortuj:"
+            :disabled="isLoadingQuestions || isSearching"
             return-object
           ></v-select>
         </v-col>
