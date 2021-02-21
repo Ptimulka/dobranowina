@@ -5,6 +5,7 @@ var QuestionsData = {
   imports: {
     q2017: () => import('@/assets/questions/2017.json'),
     q2020: () => import('@/assets/questions/2020.json'),
+    q2021: () => import('@/assets/questions/2021.json'),
   },
   todos: todoLivestreams,
   topWords: topWords,
@@ -20,7 +21,8 @@ var QuestionsData = {
   },
   allQuestions: {
     'q2017': null,
-    'q2020': null
+    'q2020': null,
+    'q2021': null
   },
   getQuestions: function(year) {
     let qyear = 'q' + year;

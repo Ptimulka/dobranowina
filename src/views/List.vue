@@ -69,7 +69,7 @@ import QuestionsData from '@/questions/questions-data';
 export default {
   data() {
     return {
-      questionsToLoad: ['2017','2020'],
+      questionsToLoad: ['2017','2020','2021'],
       questions: QuestionsData
     }
   },
