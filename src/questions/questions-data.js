@@ -2,20 +2,16 @@ import todoLivestreams from "@/assets/questions/todo.json";
 import topWords from "@/assets/questions/topWords.json";
 
 var QuestionsData = {
-  imports: {
-    q2017: () => import('@/assets/questions/2017.json'),
-    q2020: () => import('@/assets/questions/2020.json'),
-    q2021: () => import('@/assets/questions/2021.json'),
-  },
+
   todos: todoLivestreams,
   topWords: topWords,
-  loadYear: function(year) {
-    let qyear = 'q' + year;
-    if(!this.isLoaded(year)) {
-      if(qyear in this.imports) {
-        this.imports[qyear]().then(x => {
-          this.allQuestions[qyear] = x;
-      });
+  loadYears: async function(years) {
+    for (let i = 0; i < years.length; i++) {
+      let year = years[i];
+      if(!this.isLoaded[year]) {
+        let qyear = 'q' + year;
+        let importedQuestionsForYear = await import('@/assets/questions/' + year + '.json');
+        this.allQuestions[qyear] = importedQuestionsForYear;
       }
     }
   },

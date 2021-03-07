@@ -1,7 +1,7 @@
 <template>
   <v-container>
 
-    <h5 class="text-center">Liczba wszystkich pytań: {{ allQUestionsNumber }} </h5>
+    <h5 class="text-center">Liczba wszystkich pytań: {{ allQuestionsNumber }} </h5>
 
     <v-form  @submit.prevent="searchQuestions">
       <v-row no-gutters class="mt-5">
@@ -76,7 +76,7 @@
           class="ma-1"
           color="primary"
           :disabled="isLoadingQuestions || isSearching"
-          @click.prevent="topWordsButtonPressed(word)"
+          @click.prevent="searchForQuery(word)"
         >{{ word }}</v-btn>
       </div>
     </v-row>
@@ -100,8 +100,10 @@ export default {
         { sortByText: 'Od najnowszych', abbr: 'latest' },
         { sortByText: 'Od najstarszych', abbr: 'oldest' },
       ],
-      questionsToLoad: ['2017','2020','2021'],
+      questionsYearsToLoad: ['2017','2020','2021'],
+      isLoadingQuestions: true,
       questions: QuestionsData,
+      allQuestionsNumber: 0,
       topWords: QuestionsData.topWords.topwords,
       searchHelper: SearchHelper,
       isSearching: false,
@@ -110,14 +112,27 @@ export default {
       searchResult: []
     }
   },
-  created() {
-    this.questionsToLoad.forEach(questionsYear => {
-      this.questions.loadYear(questionsYear);
+  async created() {
+    // load questions
+    await this.questions.loadYears(this.questionsYearsToLoad);
+    this.isLoadingQuestions = false;
+
+    // calculate all questions number
+    this.questionsYearsToLoad.forEach(questionsYear => {
+      this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
+        this.allQuestionsNumber += livestream['questions'].length;
+      });
     });
+
+    // search for query param if exists
+    if(this.searchQueryParam) {
+      this.searchForQuery(this.searchQueryParam);
+    }
   },
   methods: {
     searchQuestions: function() {
       if(this.isSearching) {
+        //canceling search
         this.isSearching = false;
         this.searchResult = [];
         this.lastSearchCanceled = true;
@@ -126,11 +141,12 @@ export default {
         this.isSearching = true;
         this.searchResult = [];
         this.lastSearchCanceled = false;
+        this.searchQueryParam=this.searchQuery;
         this.searchHelper.getRegexpsForQuery(this.searchQuery, this.searchExactPhase, this.continueSearching);
       }
     },
-    topWordsButtonPressed: function(word) {
-      this.searchQuery = word;
+    searchForQuery: function(query) {
+      this.searchQuery = query;
       this.searchQuestions();
     },
     makeHighlightedTextFromTextAndMatches: function(text, matches) {
@@ -152,7 +168,7 @@ export default {
         return;
       }
       this.searchResult = [];
-      this.questionsToLoad.forEach(questionsYear => {
+      this.questionsYearsToLoad.forEach(questionsYear => {
         this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
           livestream['questions'].forEach((question, index) => {
             let id = livestream.date + "_" + index;
@@ -192,23 +208,19 @@ export default {
     }
   },
   computed: {
-    isLoadingQuestions() {
-      return this.questionsToLoad.reduce((isLoading, questionsYear) => {
-        if(isLoading) return true;
-        else return !this.questions.isLoaded(questionsYear)
-       }, false)
-    },
-    allQUestionsNumber() {
-      if(this.isLoadingQuestions)
-        return 0;
-      else {
-        let ret = 0;
-        this.questionsToLoad.forEach(questionsYear => {
-          this.questions.getQuestions(questionsYear)['livestreams'].forEach(livestream => {
-            ret = ret + livestream['questions'].length;
+    searchQueryParam: {
+      get() {
+        return this.$route.query.query
+      },
+      set(value) {
+        if(this.$route.query.query != value) {
+          this.$router.push({
+            query: {
+              ...this.$route.query,
+              query: value
+            }
           });
-        });
-        return ret;
+        }
       }
     },
     searchResultSorted() {
