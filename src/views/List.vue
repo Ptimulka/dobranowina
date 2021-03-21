@@ -1,14 +1,14 @@
 <template>
   <v-container>
 
-    <v-expansion-panels multiple>
+    <v-expansion-panels multiple v-if="!isLoadingQuestions">
       <v-expansion-panel
         class="year-ep"
-        v-for="questionsYear in questionsToLoad"
+        v-for="questionsYear in questionsYearsToLoad"
         :key="questionsYear"
       >
 
-        <template v-if="!isLoading[questionsYear]">
+        <template>
           <v-expansion-panel-header>
             <h2 class="display-2">{{ questionsYear }}</h2>
           </v-expansion-panel-header>
@@ -51,13 +51,13 @@
           </v-expansion-panel-content>
         </template>
 
-        <v-skeleton-loader
-          v-else
-          type="card-heading"
-        ></v-skeleton-loader>
-
       </v-expansion-panel>
     </v-expansion-panels>
+
+    <v-skeleton-loader
+      v-else
+      type="card-heading"
+    ></v-skeleton-loader>
 
   </v-container>
 </template>
@@ -69,24 +69,19 @@ import QuestionsData from '@/questions/questions-data';
 export default {
   data() {
     return {
-      questionsToLoad: ['2017','2020','2021'],
+      questionsYearsToLoad: ['2017','2020','2021'],
+      isLoadingQuestions: true,
       questions: QuestionsData
     }
   },
-  created() {
-    this.questionsToLoad.forEach(questionsYear => {
-      this.questions.loadYear(questionsYear);
-    });
+  async created() {
+    // load questions
+    await this.questions.loadYears(this.questionsYearsToLoad);
+    this.isLoadingQuestions = false;
   },
   methods: {
   },
   computed: {
-    isLoading() {
-      return this.questionsToLoad.reduce((obj, questionsYear) => {
-         obj[questionsYear] = !this.questions.isLoaded(questionsYear)
-         return obj
-       }, {})
-    }
   }
 }
 </script>
