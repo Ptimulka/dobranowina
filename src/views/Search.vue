@@ -1,7 +1,7 @@
 <template>
   <v-container>
 
-    <h5 class="text-center">Liczba wszystkich pytań: {{ allQuestionsNumber }} </h5>
+    <h5 class="text-center" id="toptext">Liczba wszystkich pytań: {{ allQuestionsNumber }} </h5>
 
     <v-form  @submit.prevent="searchQuestions">
       <v-row no-gutters class="mt-5">
@@ -76,7 +76,7 @@
           class="ma-1"
           color="primary"
           :disabled="isLoadingQuestions || isSearching"
-          @click.prevent="searchForQuery(word)"
+          @click.prevent="topWordClicked(word)"
         >{{ word }}</v-btn>
       </div>
     </v-row>
@@ -123,6 +123,15 @@ export default {
         this.allQuestionsNumber += livestream['questions'].length;
       });
     });
+
+    // set search bahaviour for hitting 'back' or 'forward' browser button
+    this.$router.beforeEach((to, from, next) => {
+      let prevQuery=this.searchQueryParam;
+      next();
+      if(prevQuery != this.searchQueryParam && !this.isSearching) {
+        this.searchForQuery(this.searchQueryParam);
+      }
+    })
 
     // search for query param if exists
     if(this.searchQueryParam) {
@@ -205,6 +214,10 @@ export default {
         this.lastSearchNoResults = true;
       else
         this.lastSearchNoResults = false;
+    },
+    topWordClicked: function(word) {
+      document.getElementById('toptext').scrollIntoView();
+      this.searchForQuery(word);
     }
   },
   computed: {
