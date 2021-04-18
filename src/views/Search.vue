@@ -126,16 +126,20 @@ export default {
 
     // set search bahaviour for hitting 'back' or 'forward' browser button
     this.$router.beforeEach((to, from, next) => {
-      let prevQuery=this.searchQueryParam;
+      let prevQuery = this.params.searchQueryParam;
+      let prevSearchAlsoInAnswers = this.params.searchAlsoInAnswersParam;
       next();
-      if(prevQuery != this.searchQueryParam && !this.isSearching) {
-        this.searchForQuery(this.searchQueryParam);
+      if((prevQuery != this.params.searchQueryParam ||
+          prevSearchAlsoInAnswers != this.params.searchAlsoInAnswersParam) &&
+          !this.isSearching) {
+        this.searchAlsoInAnswers = this.params.searchAlsoInAnswersParam;
+        this.searchForQuery(this.params.searchQueryParam);
       }
     })
 
     // search for query param if exists
-    if(this.searchQueryParam) {
-      this.searchForQuery(this.searchQueryParam);
+    if(this.params.searchQueryParam) {
+      this.searchForQuery(this.params.searchQueryParam, this.params.searchAlsoInAnswersParam);
     }
   },
   methods: {
@@ -150,12 +154,17 @@ export default {
         this.isSearching = true;
         this.searchResult = [];
         this.lastSearchCanceled = false;
-        this.searchQueryParam=this.searchQuery;
+        this.params = {
+          searchQueryParam: this.searchQuery,
+          searchAlsoInAnswersParam: this.searchAlsoInAnswers
+        };
+
         this.searchHelper.getRegexpsForQuery(this.searchQuery, this.searchExactPhase, this.continueSearching);
       }
     },
-    searchForQuery: function(query) {
+    searchForQuery: function(query, searchInAnswers) {
       this.searchQuery = query;
+      this.searchAlsoInAnswers = (searchInAnswers == 'true');
       this.searchQuestions();
     },
     makeHighlightedTextFromTextAndMatches: function(text, matches) {
@@ -221,16 +230,21 @@ export default {
     }
   },
   computed: {
-    searchQueryParam: {
+    params: {
       get() {
-        return this.$route.query.query
+        return {
+          searchQueryParam: this.$route.query.query,
+          searchAlsoInAnswersParam: this.$route.query.searchinanswers
+        }
       },
       set(value) {
-        if(this.$route.query.query != value) {
+        if(this.$route.query.query != value.searchQueryParam ||
+        this.$route.query.searchinanswers != value.searchAlsoInAnswersParam) {
           this.$router.push({
             query: {
               ...this.$route.query,
-              query: value
+              query: value.searchQueryParam,
+              searchinanswers: value.searchAlsoInAnswersParam
             }
           });
         }
