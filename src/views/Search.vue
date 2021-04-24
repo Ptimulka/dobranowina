@@ -132,14 +132,19 @@ export default {
       if((prevQuery != this.params.searchQueryParam ||
           prevSearchAlsoInAnswers != this.params.searchAlsoInAnswersParam) &&
           !this.isSearching) {
-        this.searchAlsoInAnswers = this.params.searchAlsoInAnswersParam;
+        this.searchAlsoInAnswers = this.string2bool(this.params.searchAlsoInAnswersParam);
         this.searchForQuery(this.params.searchQueryParam);
       }
     })
 
+    // set 'search also in answers' checkbox if param exists
+    if(this.params.searchAlsoInAnswersParam) {
+        this.searchAlsoInAnswers = this.string2bool(this.params.searchAlsoInAnswersParam);
+    }
+
     // search for query param if exists
     if(this.params.searchQueryParam) {
-      this.searchForQuery(this.params.searchQueryParam, this.params.searchAlsoInAnswersParam);
+      this.searchForQuery(this.params.searchQueryParam);
     }
   },
   methods: {
@@ -162,10 +167,12 @@ export default {
         this.searchHelper.getRegexpsForQuery(this.searchQuery, this.searchExactPhase, this.continueSearching);
       }
     },
-    searchForQuery: function(query, searchInAnswers) {
+    searchForQuery: function(query) {
       this.searchQuery = query;
-      this.searchAlsoInAnswers = (searchInAnswers == 'true');
       this.searchQuestions();
+    },
+    string2bool: function(value) {
+      return value == 'true' || value == true;
     },
     makeHighlightedTextFromTextAndMatches: function(text, matches) {
       var position = 0;
@@ -239,7 +246,7 @@ export default {
       },
       set(value) {
         if(this.$route.query.query != value.searchQueryParam ||
-        this.$route.query.searchinanswers != value.searchAlsoInAnswersParam) {
+        this.string2bool(this.$route.query.searchinanswers) != value.searchAlsoInAnswersParam) {
           this.$router.push({
             query: {
               ...this.$route.query,
