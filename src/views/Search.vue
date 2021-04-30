@@ -128,11 +128,14 @@ export default {
     this.$router.beforeEach((to, from, next) => {
       let prevQuery = this.params.searchQueryParam;
       let prevSearchAlsoInAnswers = this.params.searchAlsoInAnswersParam;
+      let prevSearchExactPhase = this.params.searchExactPhaseParam;
       next();
       if((prevQuery != this.params.searchQueryParam ||
-          prevSearchAlsoInAnswers != this.params.searchAlsoInAnswersParam) &&
+          prevSearchAlsoInAnswers != this.params.searchAlsoInAnswersParam ||
+          prevSearchExactPhase != this.params.searchExactPhaseParam) &&
           !this.isSearching) {
         this.searchAlsoInAnswers = this.string2bool(this.params.searchAlsoInAnswersParam);
+        this.searchExactPhase = this.string2bool(this.params.searchExactPhaseParam);
         this.searchForQuery(this.params.searchQueryParam);
       }
     })
@@ -140,6 +143,10 @@ export default {
     // set 'search also in answers' checkbox if param exists
     if(this.params.searchAlsoInAnswersParam) {
         this.searchAlsoInAnswers = this.string2bool(this.params.searchAlsoInAnswersParam);
+    }
+    // set 'search exact phase' checkbox if param exists
+    if(this.params.searchExactPhaseParam) {
+        this.searchExactPhase = this.string2bool(this.params.searchExactPhaseParam);
     }
 
     // search for query param if exists
@@ -161,7 +168,8 @@ export default {
         this.lastSearchCanceled = false;
         this.params = {
           searchQueryParam: this.searchQuery,
-          searchAlsoInAnswersParam: this.searchAlsoInAnswers
+          searchAlsoInAnswersParam: this.searchAlsoInAnswers,
+          searchExactPhaseParam: this.searchExactPhase
         };
 
         this.searchHelper.getRegexpsForQuery(this.searchQuery, this.searchExactPhase, this.continueSearching);
@@ -241,17 +249,20 @@ export default {
       get() {
         return {
           searchQueryParam: this.$route.query.query,
-          searchAlsoInAnswersParam: this.$route.query.searchinanswers
+          searchAlsoInAnswersParam: this.$route.query.searchinanswers,
+          searchExactPhaseParam: this.$route.query.searchexactphase
         }
       },
       set(value) {
         if(this.$route.query.query != value.searchQueryParam ||
-        this.string2bool(this.$route.query.searchinanswers) != value.searchAlsoInAnswersParam) {
+        this.string2bool(this.$route.query.searchinanswers) != value.searchAlsoInAnswersParam ||
+        this.string2bool(this.$route.query.searchexactphase) != value.searchExactPhaseParam) {
           this.$router.push({
             query: {
               ...this.$route.query,
               query: value.searchQueryParam,
-              searchinanswers: value.searchAlsoInAnswersParam
+              searchinanswers: value.searchAlsoInAnswersParam,
+              searchexactphase: value.searchExactPhaseParam
             }
           });
         }
