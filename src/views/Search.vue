@@ -1,7 +1,7 @@
 <template>
   <v-container>
 
-    <h5 class="text-center">Liczba wszystkich pytań: {{ allQuestionsNumber }} </h5>
+    <h5 class="text-center" id="toptext">Liczba wszystkich pytań: {{ allQuestionsNumber }} </h5>
 
     <v-form  @submit.prevent="searchQuestions">
       <v-row no-gutters class="mt-5">
@@ -76,7 +76,7 @@
           class="ma-1"
           color="primary"
           :disabled="isLoadingQuestions || isSearching"
-          @click.prevent="searchForQuery(word)"
+          @click.prevent="topWordClicked(word)"
         >{{ word }}</v-btn>
       </div>
     </v-row>
@@ -124,9 +124,34 @@ export default {
       });
     });
 
+    // set search bahaviour for hitting 'back' or 'forward' browser button
+    this.$router.beforeEach((to, from, next) => {
+      let prevQuery = this.params.searchQueryParam;
+      let prevSearchAlsoInAnswers = this.params.searchAlsoInAnswersParam;
+      let prevSearchExactPhase = this.params.searchExactPhaseParam;
+      next();
+      if((prevQuery != this.params.searchQueryParam ||
+          prevSearchAlsoInAnswers != this.params.searchAlsoInAnswersParam ||
+          prevSearchExactPhase != this.params.searchExactPhaseParam) &&
+          !this.isSearching) {
+        this.searchAlsoInAnswers = this.string2bool(this.params.searchAlsoInAnswersParam);
+        this.searchExactPhase = this.string2bool(this.params.searchExactPhaseParam);
+        this.searchForQuery(this.params.searchQueryParam);
+      }
+    })
+
+    // set 'search also in answers' checkbox if param exists
+    if(this.params.searchAlsoInAnswersParam) {
+        this.searchAlsoInAnswers = this.string2bool(this.params.searchAlsoInAnswersParam);
+    }
+    // set 'search exact phase' checkbox if param exists
+    if(this.params.searchExactPhaseParam) {
+        this.searchExactPhase = this.string2bool(this.params.searchExactPhaseParam);
+    }
+
     // search for query param if exists
-    if(this.searchQueryParam) {
-      this.searchForQuery(this.searchQueryParam);
+    if(this.params.searchQueryParam) {
+      this.searchForQuery(this.params.searchQueryParam);
     }
   },
   methods: {
@@ -141,13 +166,21 @@ export default {
         this.isSearching = true;
         this.searchResult = [];
         this.lastSearchCanceled = false;
-        this.searchQueryParam=this.searchQuery;
+        this.params = {
+          searchQueryParam: this.searchQuery,
+          searchAlsoInAnswersParam: this.searchAlsoInAnswers,
+          searchExactPhaseParam: this.searchExactPhase
+        };
+
         this.searchHelper.getRegexpsForQuery(this.searchQuery, this.searchExactPhase, this.continueSearching);
       }
     },
     searchForQuery: function(query) {
       this.searchQuery = query;
       this.searchQuestions();
+    },
+    string2bool: function(value) {
+      return value == 'true' || value == true;
     },
     makeHighlightedTextFromTextAndMatches: function(text, matches) {
       var position = 0;
@@ -205,19 +238,31 @@ export default {
         this.lastSearchNoResults = true;
       else
         this.lastSearchNoResults = false;
+    },
+    topWordClicked: function(word) {
+      document.getElementById('toptext').scrollIntoView();
+      this.searchForQuery(word);
     }
   },
   computed: {
-    searchQueryParam: {
+    params: {
       get() {
-        return this.$route.query.query
+        return {
+          searchQueryParam: this.$route.query.query,
+          searchAlsoInAnswersParam: this.$route.query.searchinanswers,
+          searchExactPhaseParam: this.$route.query.searchexactphase
+        }
       },
       set(value) {
-        if(this.$route.query.query != value) {
+        if(this.$route.query.query != value.searchQueryParam ||
+        this.string2bool(this.$route.query.searchinanswers) != value.searchAlsoInAnswersParam ||
+        this.string2bool(this.$route.query.searchexactphase) != value.searchExactPhaseParam) {
           this.$router.push({
             query: {
               ...this.$route.query,
-              query: value
+              query: value.searchQueryParam,
+              searchinanswers: value.searchAlsoInAnswersParam,
+              searchexactphase: value.searchExactPhaseParam
             }
           });
         }
