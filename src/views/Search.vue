@@ -195,6 +195,37 @@ export default {
       ret += text.substr(position);
       return ret;
     },
+    calculateScore: function(matches, matchesAnswer) {
+
+      let counts = {};
+      for (let match of matches) {
+        let matchLowercase = match[0].toLowerCase();
+        if(counts[matchLowercase])
+          counts[matchLowercase] += 1;
+        else
+          counts[matchLowercase] = 1;
+      }
+
+      let countsAnswer = {};
+      for (let match of matchesAnswer) {
+        let matchLowercase = match[0].toLowerCase();
+        if(countsAnswer[matchLowercase])
+          countsAnswer[matchLowercase] += 1;
+        else
+          countsAnswer[matchLowercase] = 1;
+      }
+
+      var score = 0;
+      Object.keys(counts).forEach(key => {
+        score += key.length + counts[key]/50;
+      })
+      var scoreAnswer = 0;
+      Object.keys(countsAnswer).forEach(key => {
+        scoreAnswer += key.length + countsAnswer[key]/50;
+      })
+
+      return score + scoreAnswer/2;
+    },
     continueSearching: function(regexp) {
       if(this.lastSearchCanceled) {
         this.isSearching = false;
@@ -212,12 +243,7 @@ export default {
               matchesAnswer = [...question.answer.matchAll(regexp)];
             }
             if(matches.length > 0 || (this.searchAlsoInAnswers && matchesAnswer.length > 0)) {
-              let score = matches.reduce((score, match) => {
-                return score += match[0].length;
-              },0);
-              let scoreAnswer = matchesAnswer.reduce((score, match) => {
-                return score += match[0].length;
-              },0) / 2;
+              let calculatedScore = this.calculateScore(matches, matchesAnswer);
               let result = {
                 id: id,
                 question: this.makeHighlightedTextFromTextAndMatches(question.question, matches),
@@ -226,7 +252,7 @@ export default {
                 link: livestream.link,
                 date: livestream.dateread + ' ' + questionsYear,
                 dateSort: livestream.date,
-                score: score + scoreAnswer
+                score: calculatedScore
               }
               this.searchResult.push(result);
             }
