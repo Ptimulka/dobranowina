@@ -153,6 +153,9 @@ export default {
     if(this.params.searchQueryParam) {
       this.searchForQuery(this.params.searchQueryParam);
     }
+    else {
+      this.searchHelper.sendDummyRequestToWakeUpWordFamiliesWebsite();
+    }
   },
   methods: {
     searchQuestions: function() {

@@ -4,6 +4,14 @@ const familiesUrl = 'https://polishwordfamilies.herokuapp.com/wordfamilies/';
 
 var SearchHelper = {
 
+  sendDummyRequestToWakeUpWordFamiliesWebsite: function() {
+    https.get(familiesUrl + "Jezus", () => {
+      return null;
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });
+  },
+
   getRegexpsForQuery: function(query, searchExactPhase, continueSearchingCallback) {
 
     if(searchExactPhase) {
@@ -22,7 +30,7 @@ var SearchHelper = {
     }
     let allWordsStringWithCommas = words.join(',');
 
-     https.get(familiesUrl + allWordsStringWithCommas, (resp) => {
+    https.get(familiesUrl + allWordsStringWithCommas, (resp) => {
       let data = '';
       resp.on('data', (chunk) => {
         data += chunk;
