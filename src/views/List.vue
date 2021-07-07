@@ -1,5 +1,46 @@
 <template>
   <v-container>
+    <v-card class="my-5">
+      <h1 class="py-5 headline text-center">Najnowsze filmy Q&amp;A</h1>
+
+      <v-row no-gutters>
+        <v-col
+          v-for="livestream in newestLivestreams"
+          :key="'newest' + livestream.date"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="3"
+        >
+          <div
+            class="pa-2"
+            outlined
+            tile
+          >
+            <v-btn
+              large block color="primary"
+              :href="livestream.link"
+              target="_blank"
+              class="my-2">
+             {{ livestream.dateread }}<v-icon>mdi-open-in-new</v-icon>
+            </v-btn>
+            <template>
+              <LazyYoutube :src="livestream.link" />
+            </template>
+              <div
+                v-for="question in livestream.questions.slice(0, listQuestionsForEachLivestreamN)"
+                :key="'qil' + question.question"
+              >
+                <v-icon>mdi-arrow-right</v-icon>{{ question.question }}
+              </div>
+          </div>
+        </v-col>
+      </v-row>
+    </v-card>
+
+    <v-card class="mt-5">
+      <h1 class="py-5 headline text-center">Pełna lista Q&amp;A</h1>
+    </v-card>
 
     <v-expansion-panels multiple v-if="!isLoadingQuestions">
       <v-expansion-panel
@@ -7,7 +48,6 @@
         v-for="questionsYear in questionsYearsToLoad"
         :key="questionsYear"
       >
-
         <template>
           <v-expansion-panel-header>
             <h2 class="display-2">{{ questionsYear }}</h2>
@@ -24,7 +64,13 @@
                   <h2 class="headline">{{ livestream.dateread }}</h2>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-btn :href="livestream.link" text large class="my-2"><v-icon>mdi-play</v-icon>Obejrzyj</v-btn>
+                  <v-btn
+                    :href="livestream.link"
+                    text large class="my-2"
+                    target="_blank"
+                  >
+                    Obejrzyj<v-icon>mdi-open-in-new</v-icon>
+                  </v-btn>
                   <v-expansion-panels multiple accordion>
                     <v-expansion-panel
                       v-for="question in livestream['questions']"
@@ -36,7 +82,11 @@
                       <v-expansion-panel-content>
                         <div class="px-4">
                           <h4 class="pb-5" v-if="question.timelink">
-                            <a :href="question.timelink">{{ question.timelink }}</a>
+                            <a :href="question.timelink"
+                              target="_blank"
+                            >
+                            {{ question.timelink }}
+                          </a>
                           </h4>
                           <span v-html="question.answer"></span>
                         </div>
@@ -70,6 +120,9 @@ export default {
   data() {
     return {
       questionsYearsToLoad: ['2017','2020','2021'],
+      lastYear: '2021',
+      showLastN: 12,
+      listQuestionsForEachLivestreamN: 7,
       isLoadingQuestions: true,
       questions: QuestionsData
     }
@@ -82,6 +135,15 @@ export default {
   methods: {
   },
   computed: {
+    newestLivestreams() {
+      if(this.isLoadingQuestions) {
+        return [];
+      }
+      else {
+        let newest = this.questions.getQuestions(this.lastYear)['livestreams'];
+        return newest.slice(-this.showLastN).reverse()
+      }
+    }
   }
 }
 </script>
