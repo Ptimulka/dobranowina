@@ -38,71 +38,94 @@
       </v-row>
     </v-card>
 
-    <v-card class="mt-5">
+    <div class="mt-5">
       <h1 class="py-5 headline text-center">Pełna lista Q&amp;A</h1>
-    </v-card>
+      <h2 class="pb-5 subtitle-1 text-center">Wybierz rok aby rozwinąć listę livestreamów</h2>
+    </div>
 
-    <v-expansion-panels multiple v-if="!isLoadingQuestions">
-      <v-expansion-panel
-        class="year-ep"
+    <v-list v-if="!isLoadingQuestions">
+
+      <!-- years -->
+      <v-list-group
         v-for="questionsYear in questionsYearsToLoad"
-        :key="questionsYear"
-      >
-        <template>
-          <v-expansion-panel-header>
-            <h2 class="display-2">{{ questionsYear }}</h2>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
+        :key="'listitem' + questionsYear">
 
-            <v-expansion-panels multiple>
-              <v-expansion-panel
-                v-for="livestream in questions.getQuestions(questionsYear)['livestreams']"
-                :key="livestream.date"
-                class="livestream-ep"
-              >
-                <v-expansion-panel-header>
-                  <h2 class="headline">{{ livestream.dateread }}</h2>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-btn
-                    :href="livestream.link"
-                    text large class="my-2"
-                    target="_blank"
-                  >
-                    Obejrzyj<v-icon>mdi-open-in-new</v-icon>
-                  </v-btn>
-                  <v-expansion-panels multiple accordion>
-                    <v-expansion-panel
-                      v-for="question in livestream['questions']"
-                      :key="question.question"
-                    >
-                      <v-expansion-panel-header>
-                        <h2 class="title">{{ question.question }}</h2>
-                      </v-expansion-panel-header>
-                      <v-expansion-panel-content>
-                        <div class="px-4">
-                          <h4 class="pb-5" v-if="question.timelink">
-                            <a :href="question.timelink"
-                              target="_blank"
-                            >
-                            {{ question.timelink }}
-                          </a>
-                          </h4>
-                          <span v-html="question.answer"></span>
-                        </div>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
-
-          </v-expansion-panel-content>
+        <template v-slot:activator>
+          <v-list-item-title class="py-2">
+            <h1 class="display-2">{{ questionsYear }}</h1>
+          </v-list-item-title>
         </template>
+        <!-- dates -->
+        <v-list-group sub-group
+          v-for="livestream in questions.getQuestions(questionsYear)['livestreams']"
+          :key="'listitemsub' + livestream.date">
 
-      </v-expansion-panel>
-    </v-expansion-panels>
+          <template v-slot:activator>
+            <v-list-item-title>
+              <v-row>
+                <v-col cols="auto" class="mr-auto">
+                  <h6 class="title">{{ livestream.dateread }}</h6>
+                </v-col>
+                <v-col cols="auto">
+                  <v-btn small
+                    :href="livestream.link"
+                    rounded
+                    color="primary"
+                    target="_blank"
+                  >Obejrzyj<v-icon>mdi-open-in-new</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-list-item-title>
+          </template>
+          <!-- questions -->
+          <v-list-item
+            v-for="question in livestream['questions']"
+            :key="'listitemsubsub' + question.question"
+          >
+            <v-dialog
+              transition="dialog-bottom-transition"
+              max-width="600"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <p class="body-1"
+                  v-bind="attrs"
+                  v-on="on"
+                ><v-icon color="primary">mdi-arrow-right</v-icon>{{ question.question }}</p>
+              </template>
+              <template v-slot:default="dialog">
+                <v-card>
+                  <v-card-title color="primary">
+                    {{ question.question }}
+                  </v-card-title>
+                  <v-card-subtitle class="mt-1">
+                    {{ livestream.dateread + ' ' + questionsYear }}
+                  </v-card-subtitle>
+                  <v-card-text>
+                    <v-btn
+                      v-if="question.timelink"
+                      :href="question.timelink"
+                      rounded
+                      color="primary"
+                      target="_blank"
+                    >Obejrzyj<v-icon>mdi-open-in-new</v-icon>
+                    </v-btn>
+                    <v-divider class="my-2"></v-divider>
+                    <h4 class="h4 pt-2"><span v-html="question.answer"></span></h4>
+                  </v-card-text>
+                  <v-card-actions class="justify-end">
+                    <v-btn text
+                      @click="dialog.value = false"
+                    >Zamknij</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
+
+          </v-list-item>
+        </v-list-group>
+      </v-list-group>
+    </v-list>
 
     <v-skeleton-loader
       v-else
