@@ -1,6 +1,11 @@
 <template>
   <nav>
-    <v-navigation-drawer app v-model="drawer" class="primary lighten-2" disable-resize-watcher>
+    <v-navigation-drawer app
+      v-model="drawer"
+      class="primary lighten-2"
+      style="z-index: 150"
+      disable-resize-watcher
+    >
       <v-col align="right">
         <v-btn fab class="white--text" text @click="drawer = !drawer">
           <v-icon class="white--text">mdi-arrow-left</v-icon>
@@ -26,6 +31,7 @@
       shrink-on-scroll
       fade-img-on-scroll
       src="dobranowinalogothinflaggrad.jpg"
+      style="z-index: 100"
     >
       <template v-slot:img="{ props }">
         <v-img
