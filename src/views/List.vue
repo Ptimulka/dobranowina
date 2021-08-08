@@ -64,7 +64,15 @@
             <v-list-item-title>
               <v-row>
                 <v-col cols="auto" class="mr-auto">
-                  <h6 class="title">{{ livestream.dateread }}</h6>
+                  <h6 class="title">
+                    {{ livestream.dateread }}
+                    <v-tooltip v-if="livestream.hastimelinks" right>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon v-bind="attrs" v-on="on">mdi-clock-outline</v-icon>
+                      </template>
+                      <span>Pytania z tego livestreama zawierają linki czasowe</span>
+                    </v-tooltip>
+                  </h6>
                 </v-col>
                 <v-col cols="auto">
                   <v-btn small
@@ -88,12 +96,19 @@
               max-width="600"
             >
               <template v-slot:activator="{ on, attrs }">
-                <p class="body-1"
-                  v-bind="attrs"
-                  v-on="on"
-                ><v-icon color="primary">mdi-arrow-right</v-icon>{{ question.question }}</p>
+                <p class="body-1" v-bind="attrs" v-on="on">
+                  <v-icon color="primary">mdi-arrow-right</v-icon>
+                  {{ question.question }}
+                  <v-tooltip v-if="question.timelink" right>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon v-bind="attrs" v-on="on">mdi-clock-outline</v-icon>
+                    </template>
+                    <span>To pytanie zawiera link czasowy</span>
+                  </v-tooltip>
+                </p>
               </template>
               <template v-slot:default="dialog">
+                <!-- dialog window with quesion -->
                 <v-card>
                   <v-card-title color="primary">
                     {{ question.question }}
