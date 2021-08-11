@@ -72,6 +72,12 @@
                       </template>
                       <span>Pytania z tego livestreama zawierają linki czasowe</span>
                     </v-tooltip>
+                    <v-tooltip v-if="livestream.hasanswers" right>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
+                      </template>
+                      <span>Spisano odpowiedzi do pytań z tego livestreama</span>
+                    </v-tooltip>
                   </h6>
                 </v-col>
                 <v-col cols="auto">
@@ -105,6 +111,12 @@
                     </template>
                     <span>To pytanie zawiera link czasowy</span>
                   </v-tooltip>
+                  <v-tooltip v-if="question.answer" right>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
+                    </template>
+                    <span>Spisano odpowiedź na to pytanie</span>
+                  </v-tooltip>
                 </p>
               </template>
               <template v-slot:default="dialog">
@@ -126,7 +138,9 @@
                     >Obejrzyj<v-icon>mdi-open-in-new</v-icon>
                     </v-btn>
                     <v-divider class="my-2"></v-divider>
-                    <h4 class="h4 pt-2"><span v-html="question.answer"></span></h4>
+                    <h4 class="h4 pt-2">
+                      <span v-html="question.answer ? question.answer : '[Nie spisano odpowiedzi]'">
+                      </span></h4>
                   </v-card-text>
                   <v-card-actions class="justify-end">
                     <v-btn text

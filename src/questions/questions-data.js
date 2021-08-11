@@ -31,8 +31,8 @@ var QuestionsData = {
   },
   setDerivedProperties: function(questionsObject) {
     questionsObject.livestreams.forEach(livestream => {
-      // checking only first question - assuming that if first question has timelink, the rest also have
-      livestream.hastimelinks = livestream.questions[0].timelink ? true : false;
+      livestream.hastimelinks = livestream.questions.every(q => q.timelink ? true : false);
+      livestream.hasanswers = livestream.questions.every(q => q.answer ? true : false);
     });
 
   }
