@@ -78,6 +78,14 @@
                       </template>
                       <span>Spisano odpowiedzi do pytań z tego livestreama</span>
                     </v-tooltip>
+                    <v-tooltip right>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon v-bind="attrs" v-on="on">
+                          {{ livestream.platform === "FB" ? "mdi-facebook" : "mdi-youtube" }}
+                        </v-icon>
+                      </template>
+                      <span>Ten livestream znajduje się na {{ livestream.platform }}</span>
+                    </v-tooltip>
                   </h6>
                 </v-col>
                 <v-col cols="auto">
@@ -86,7 +94,7 @@
                     rounded
                     color="primary"
                     target="_blank"
-                  >Obejrzyj<v-icon>mdi-open-in-new</v-icon>
+                  >Obejrzyj na {{ livestream.platform }}<v-icon>mdi-open-in-new</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -127,6 +135,9 @@
                   </v-card-title>
                   <v-card-subtitle class="mt-1">
                     {{ livestream.dateread + ' ' + questionsYear }}
+                    <v-icon>
+                      {{ livestream.platform === "FB" ? "mdi-facebook" : "mdi-youtube" }}
+                    </v-icon>
                   </v-card-subtitle>
                   <v-card-text>
                     <v-btn
@@ -135,7 +146,7 @@
                       rounded
                       color="primary"
                       target="_blank"
-                    >Obejrzyj<v-icon>mdi-open-in-new</v-icon>
+                    >Obejrzyj na {{ livestream.platform }}<v-icon>mdi-open-in-new</v-icon>
                     </v-btn>
                     <v-divider class="my-2"></v-divider>
                     <h4 class="h4 pt-2">

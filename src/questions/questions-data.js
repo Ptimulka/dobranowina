@@ -33,6 +33,7 @@ var QuestionsData = {
     questionsObject.livestreams.forEach(livestream => {
       livestream.hastimelinks = livestream.questions.every(q => q.timelink ? true : false);
       livestream.hasanswers = livestream.questions.every(q => q.answer ? true : false);
+      livestream.platform = livestream.link.includes("facebook") ? "FB" : "YT";
     });
 
   }
