@@ -244,7 +244,7 @@ export default {
 
             let matches = [...question.question.matchAll(regexp)];
             var matchesAnswer = []
-            if(this.searchAlsoInAnswers) {
+            if(this.searchAlsoInAnswers && question.answer) {
               matchesAnswer = [...question.answer.matchAll(regexp)];
             }
             if(matches.length > 0 || (this.searchAlsoInAnswers && matchesAnswer.length > 0)) {
