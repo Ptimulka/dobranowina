@@ -8,9 +8,10 @@ var QuestionsData = {
   loadYears: async function(years) {
     for (let i = 0; i < years.length; i++) {
       let year = years[i];
-      if(!this.isLoaded[year]) {
+      if(!this.isLoaded(year)) {
         let qyear = 'q' + year;
         let importedQuestionsForYear = await import('@/assets/questions/' + year + '.json');
+        this.setDerivedProperties(importedQuestionsForYear);
         this.allQuestions[qyear] = importedQuestionsForYear;
       }
     }
@@ -28,6 +29,14 @@ var QuestionsData = {
     let qyear = 'q' + year;
     return this.allQuestions[qyear] != null;
   },
+  setDerivedProperties: function(questionsObject) {
+    questionsObject.livestreams.forEach(livestream => {
+      livestream.hastimelinks = livestream.questions.every(q => q.timelink ? true : false);
+      livestream.hasanswers = livestream.questions.every(q => q.answer ? true : false);
+      livestream.platform = livestream.link.includes("facebook") ? "FB" : "YT";
+    });
+
+  }
 }
 
 export default QuestionsData;

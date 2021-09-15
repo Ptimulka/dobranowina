@@ -186,6 +186,8 @@ export default {
       return value == 'true' || value == true;
     },
     makeHighlightedTextFromTextAndMatches: function(text, matches) {
+      if(!text)
+        return "";
       var position = 0;
       let ret = "";
       for (let match of matches) {
@@ -242,15 +244,16 @@ export default {
 
             let matches = [...question.question.matchAll(regexp)];
             var matchesAnswer = []
-            if(this.searchAlsoInAnswers) {
+            if(this.searchAlsoInAnswers && question.answer) {
               matchesAnswer = [...question.answer.matchAll(regexp)];
             }
             if(matches.length > 0 || (this.searchAlsoInAnswers && matchesAnswer.length > 0)) {
               let calculatedScore = this.calculateScore(matches, matchesAnswer);
+              let answer = this.makeHighlightedTextFromTextAndMatches(question.answer, matchesAnswer);
               let result = {
                 id: id,
                 question: this.makeHighlightedTextFromTextAndMatches(question.question, matches),
-                answer: this.makeHighlightedTextFromTextAndMatches(question.answer, matchesAnswer),
+                answer: answer==="" ? "[Nie spisano odpowiedzi]" : answer,
                 timelink: question.timelink,
                 link: livestream.link,
                 date: livestream.dateread + ' ' + questionsYear,

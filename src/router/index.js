@@ -17,14 +17,14 @@ const routes = [
     component: () => import('../views/List.vue')
   },
   {
+    path: '/newest',
+    name: 'newest',
+    component: () => import('../views/Newest.vue')
+  },
+  {
     path: '/iwillhelp',
     name: 'iwillhelp',
     component: () => import('../views/IWillHelp.vue')
-  },
-  {
-    path: '/faq',
-    name: 'faq',
-    component: () => import('../views/FAQ.vue')
   },
   {
     path: '/contact',
