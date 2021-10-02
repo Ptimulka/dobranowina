@@ -30,23 +30,21 @@
                     {{ livestream.dateread }}
                     <v-tooltip v-if="livestream.hastimelinks" right>
                       <template v-slot:activator="{ on, attrs }">
-                        <v-icon v-bind="attrs" v-on="on">mdi-clock-outline</v-icon>
+                        <v-icon color="primary" v-bind="attrs" v-on="on">mdi-clock-outline</v-icon>
                       </template>
                       <span>Pytania z tego livestreama zawierają linki czasowe</span>
                     </v-tooltip>
-                    <v-tooltip v-if="livestream.hasanswers" right>
+                    <v-tooltip v-if="livestream.hasallanswers" right>
                       <template v-slot:activator="{ on, attrs }">
-                        <v-icon v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
+                        <v-icon color="primary" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
                       </template>
                       <span>Spisano odpowiedzi do pytań z tego livestreama</span>
                     </v-tooltip>
-                    <v-tooltip right>
+                    <v-tooltip v-if="!livestream.hasallanswers && livestream.hassomeanswers" right>
                       <template v-slot:activator="{ on, attrs }">
-                        <v-icon v-bind="attrs" v-on="on">
-                          {{ livestream.platform === "FB" ? "mdi-facebook" : "mdi-youtube" }}
-                        </v-icon>
+                        <v-icon color="grey" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
                       </template>
-                      <span>Ten livestream znajduje się na {{ livestream.platform }}</span>
+                      <span>Spisano odpowiedzi do niektórych pytań z tego livestreama</span>
                     </v-tooltip>
                   </h6>
                 </v-col>
@@ -54,9 +52,13 @@
                   <v-btn small
                     :href="livestream.link"
                     rounded
-                    color="primary"
+                    :color="buttonColorFromPlatform(livestream.platform)"
                     target="_blank"
-                  >Obejrzyj na {{ livestream.platform }}<v-icon>mdi-open-in-new</v-icon>
+                  >
+                  <v-icon>
+                    {{ livestream.platform === "FB" ? "mdi-facebook" : "mdi-youtube" }}
+                  </v-icon>
+                    Obejrzyj na {{ livestream.platform }}<v-icon>mdi-open-in-new</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -77,13 +79,13 @@
                   {{ question.question }}
                   <v-tooltip v-if="question.timelink" right>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-icon v-bind="attrs" v-on="on">mdi-clock-outline</v-icon>
+                      <v-icon color="primary" v-bind="attrs" v-on="on">mdi-clock-outline</v-icon>
                     </template>
                     <span>To pytanie zawiera link czasowy</span>
                   </v-tooltip>
                   <v-tooltip v-if="question.answer" right>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-icon v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
+                      <v-icon color="primary" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
                     </template>
                     <span>Spisano odpowiedź na to pytanie</span>
                   </v-tooltip>
@@ -97,18 +99,19 @@
                   </v-card-title>
                   <v-card-subtitle class="mt-1">
                     {{ livestream.dateread + ' ' + questionsYear }}
-                    <v-icon>
-                      {{ livestream.platform === "FB" ? "mdi-facebook" : "mdi-youtube" }}
-                    </v-icon>
                   </v-card-subtitle>
                   <v-card-text>
                     <v-btn
                       v-if="question.timelink"
                       :href="question.timelink"
                       rounded
-                      color="primary"
+                      :color="buttonColorFromPlatform(livestream.platform)"
                       target="_blank"
-                    >Obejrzyj na {{ livestream.platform }}<v-icon>mdi-open-in-new</v-icon>
+                    >
+                    <v-icon>
+                      {{ livestream.platform === "FB" ? "mdi-facebook" : "mdi-youtube" }}
+                    </v-icon>
+                      Obejrzyj na {{ livestream.platform }}<v-icon>mdi-open-in-new</v-icon>
                     </v-btn>
                     <v-divider class="my-2"></v-divider>
                     <h4 class="h4 pt-2">
@@ -155,6 +158,13 @@ export default {
     this.isLoadingQuestions = false;
   },
   methods: {
+    buttonColorFromPlatform: function(platform) {
+      if(platform === "FB") {
+        return "facebookblue";
+      } else {
+        return "red";
+      }
+    }
   },
   computed: {
   }
