@@ -137,6 +137,16 @@
       type="card-heading"
     ></v-skeleton-loader>
 
+    <h2 class="mt-5 pb-1 subtitle-1 text-center">
+        <v-icon color="primary">mdi-clock-outline</v-icon> - Livestream zawiera link czasowy
+    </h2>
+    <h2 class="pb-1 subtitle-1 text-center">
+      <v-icon color="primary" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon> - Spisano odpowiedzi na pytania
+    </h2>
+    <h2 class="pb-5 subtitle-1 text-center">
+      <v-icon color="grey" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon> - Częściowo spisano odpowedzi na pytania
+    </h2>
+
   </v-container>
 </template>
 
