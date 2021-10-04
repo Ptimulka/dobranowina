@@ -16,7 +16,8 @@ export default new Vuetify({
         info: '#2196F3',
         success: '#4CAF50',
         warning: '#FFC107',
-        background: colors.indigo.lighten5
+        background: colors.indigo.lighten5,
+        facebookblue: '#4267B2'
       },
     },
     options: {
