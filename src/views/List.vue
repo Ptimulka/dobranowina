@@ -52,7 +52,7 @@
                   <v-btn small
                     :href="livestream.link"
                     rounded
-                    :color="buttonColorFromPlatform(livestream.platform)"
+                    :color="commonFunctions.buttonColorFromPlatform(livestream.platform)"
                     target="_blank"
                   >
                   <v-icon>
@@ -68,68 +68,35 @@
           <v-list-item
             v-for="question in livestream['questions']"
             :key="'listitemsubsub' + question.question"
+            class="pointercursor"
           >
-            <v-dialog
-              transition="dialog-bottom-transition"
-              max-width="600"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <p class="body-1" v-bind="attrs" v-on="on">
-                  <v-icon color="primary">mdi-arrow-right</v-icon>
-                  {{ question.question }}
-                  <v-tooltip v-if="question.timelink" right>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-icon color="primary" v-bind="attrs" v-on="on">mdi-clock-outline</v-icon>
-                    </template>
-                    <span>To pytanie zawiera link czasowy</span>
-                  </v-tooltip>
-                  <v-tooltip v-if="question.answer" right>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-icon color="primary" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
-                    </template>
-                    <span>Spisano odpowiedź na to pytanie</span>
-                  </v-tooltip>
-                </p>
-              </template>
-              <template v-slot:default="dialog">
-                <!-- dialog window with quesion -->
-                <v-card>
-                  <v-card-title color="primary">
-                    {{ question.question }}
-                  </v-card-title>
-                  <v-card-subtitle class="mt-1">
-                    {{ livestream.dateread + ' ' + questionsYear }}
-                  </v-card-subtitle>
-                  <v-card-text>
-                    <v-btn
-                      v-if="question.timelink"
-                      :href="question.timelink"
-                      rounded
-                      :color="buttonColorFromPlatform(livestream.platform)"
-                      target="_blank"
-                    >
-                    <v-icon>
-                      {{ livestream.platform === "FB" ? "mdi-facebook" : "mdi-youtube" }}
-                    </v-icon>
-                      Obejrzyj na {{ livestream.platform }}<v-icon>mdi-open-in-new</v-icon>
-                    </v-btn>
-                    <v-divider class="my-2"></v-divider>
-                    <h4 class="h4 pt-2">
-                      <span v-html="question.answer ? question.answer : '[Nie spisano odpowiedzi]'">
-                      </span></h4>
-                  </v-card-text>
-                  <v-card-actions class="justify-end">
-                    <v-btn text
-                      @click="dialog.value = false"
-                    >Zamknij</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </template>
-            </v-dialog>
 
+            <p class="body-1" @click.stop="questionClicked(questionsYear, question, livestream)">
+              <v-icon color="primary">mdi-arrow-right</v-icon>
+              {{ question.question }}
+              <v-tooltip v-if="question.timelink" right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon color="primary" v-bind="attrs" v-on="on">mdi-clock-outline</v-icon>
+                </template>
+                <span>To pytanie zawiera link czasowy</span>
+              </v-tooltip>
+              <v-tooltip v-if="question.answer" right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon color="primary" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon>
+                </template>
+                <span>Spisano odpowiedź na to pytanie</span>
+              </v-tooltip>
+            </p>
           </v-list-item>
         </v-list-group>
       </v-list-group>
+
+      <SingleQuestionDialog
+        :isopened.sync="isQuestionsDialogOpened"
+        :year="currentDialogYear"
+        :livestream="currentDialogLivestream"
+        :question="currentDialogQuestion" />
+
     </v-list>
 
     <v-skeleton-loader
@@ -141,10 +108,10 @@
         <v-icon color="primary">mdi-clock-outline</v-icon> - Livestream zawiera link czasowy
     </h2>
     <h2 class="pb-1 subtitle-1 text-center">
-      <v-icon color="primary" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon> - Spisano odpowiedzi na pytania
+      <v-icon color="primary">mdi-text-box-outline</v-icon> - Spisano odpowiedzi na pytania
     </h2>
     <h2 class="pb-5 subtitle-1 text-center">
-      <v-icon color="grey" v-bind="attrs" v-on="on">mdi-text-box-outline</v-icon> - Częściowo spisano odpowedzi na pytania
+      <v-icon color="grey">mdi-text-box-outline</v-icon> - Częściowo spisano odpowedzi na pytania
     </h2>
 
   </v-container>
@@ -153,13 +120,23 @@
 
 <script>
 import QuestionsData from '@/questions/questions-data';
+import CommonFunctions from '@/questions/common-functions';
+import SingleQuestionDialog from '@/components/SingleQuestionDialog';
 
 export default {
+  components: {
+    SingleQuestionDialog
+  },
   data() {
     return {
       questionsYearsToLoad: ['2017','2020','2021'],
       isLoadingQuestions: true,
-      questions: QuestionsData
+      questions: QuestionsData,
+      commonFunctions: CommonFunctions,
+      currentDialogYear: null,
+      currentDialogLivestream: null,
+      currentDialogQuestion: null,
+      isQuestionsDialogOpened: false
     }
   },
   async created() {
@@ -168,12 +145,11 @@ export default {
     this.isLoadingQuestions = false;
   },
   methods: {
-    buttonColorFromPlatform: function(platform) {
-      if(platform === "FB") {
-        return "facebookblue";
-      } else {
-        return "red";
-      }
+    questionClicked:  function(year, question, livestream) {
+      this.currentDialogYear = year;
+      this.currentDialogQuestion = question;
+      this.currentDialogLivestream = livestream;
+      this.isQuestionsDialogOpened = true;
     }
   },
   computed: {
@@ -184,6 +160,10 @@ export default {
 
 .container {
   padding: 12px 0;
+}
+
+.v-list-item.pointercursor {
+  cursor: pointer;
 }
 
 </style>
