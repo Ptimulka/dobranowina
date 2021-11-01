@@ -2,15 +2,48 @@
   <v-dialog
     v-model="isopened"
     transition="dialog-bottom-transition"
-    max-width="600"
+    max-width="800"
   >
     <v-card v-if="question">
-      <v-card-title color="primary">
-        {{ question.question }}
-      </v-card-title>
-      <v-card-subtitle class="mt-1">
-        {{ livestream.dateread + ' ' + year }}
-      </v-card-subtitle>
+      <v-container fill-height fluid>
+        <v-row align="center" no-gutters>
+
+          <v-col class="col-1 text-center">
+            <v-btn
+              fab
+              dark
+              small
+              color="grey"
+            ><v-icon dark>
+                mdi-menu-left
+              </v-icon>
+            </v-btn>
+          </v-col>
+
+          <v-col class="col-10">
+            <v-card-title color="primary">
+              {{ question.question }}
+            </v-card-title>
+            <v-card-subtitle class="mt-1">
+              {{ livestream.dateread + ' ' + year }}
+            </v-card-subtitle>
+          </v-col>
+
+          <v-col class="col-1 text-center">
+              <v-btn
+                fab
+                dark
+                small
+                color="grey"
+              ><v-icon dark>
+                mdi-menu-right
+              </v-icon>
+            </v-btn>
+          </v-col>
+
+        </v-row>
+      </v-container>
+
       <v-card-text>
         <v-btn
           v-if="question.timelink"
@@ -34,6 +67,7 @@
           @click="$emit('update:isopened', false);"
         >Zamknij</v-btn>
       </v-card-actions>
+
     </v-card>
   </v-dialog>
 </template>
@@ -50,3 +84,11 @@ export default {
   },
 }
 </script>
+
+<style>
+
+.v-dialog {
+  margin: 0
+}
+
+</style>

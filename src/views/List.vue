@@ -135,7 +135,9 @@ export default {
       commonFunctions: CommonFunctions,
       currentDialogYear: null,
       currentDialogLivestream: null,
+      currentDialogLivestreamIndex: null,
       currentDialogQuestion: null,
+      currentDialogQuestionIndex: null,
       isQuestionsDialogOpened: false
     }
   },
@@ -150,6 +152,12 @@ export default {
       this.currentDialogQuestion = question;
       this.currentDialogLivestream = livestream;
       this.isQuestionsDialogOpened = true;
+    },
+    next: function() {
+
+    },
+    prev: function() {
+
     }
   },
   computed: {

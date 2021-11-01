@@ -37,6 +37,46 @@ var QuestionsData = {
       livestream.platform = livestream.link.includes("facebook") ? "FB" : "YT";
     });
 
+  },
+  getPreviousQuestion: function(year, livestreamIndex, questionIndex) {
+
+    if(year == '2017' && livestreamIndex == 1 && questionIndex == 0)
+      return null;
+
+    let yearObject = this.getQuestions(year);
+
+    let prevYear = year;
+    let prevQuestionIndex = questionIndex - 1;
+    let prevLivestremIndex = livestreamIndex;
+
+    if(prevQuestionIndex < 0) {
+      prevLivestremIndex = prevLivestremIndex - 1;
+
+      if(prevLivestremIndex >= 0) {
+        prevQuestionIndex = yearObject.livestreams[prevLivestremIndex].length - 1;
+      }
+      else {
+        prevYear = this.getPreviousYear(year);
+        let prevYearObject = this.getQuestions(prevYear);
+        prevLivestremIndex = prevYearObject.livestreams.length - 1;
+        prevQuestionIndex = prevYearObject.livestreams[prevLivestremIndex].questions.length - 1;
+      }
+
+    }
+
+    return {
+      "year": prevYear,
+      "livestreamIndex": prevLivestremIndex,
+      "questionIndex": prevQuestionIndex
+    }
+
+  },
+  getPreviousYear: function(year) {
+    if(year == '2020')
+      return '2017';
+    if(year == '2021')
+      return '2020';
+    else return null;
   }
 }
 
