@@ -19,7 +19,7 @@
         </template>
         <!-- dates -->
         <v-list-group sub-group
-          v-for="livestream in questions.getQuestions(questionsYear)['livestreams']"
+          v-for="(livestream, livestreamIndex) in questions.getQuestions(questionsYear)['livestreams']"
           :key="'listitemsub' + livestream.date">
 
           <template v-slot:activator>
@@ -66,12 +66,12 @@
           </template>
           <!-- questions -->
           <v-list-item
-            v-for="question in livestream['questions']"
+            v-for="(question, questionIndex) in livestream['questions']"
             :key="'listitemsubsub' + question.question"
             class="pointercursor"
           >
 
-            <p class="body-1" @click.stop="questionClicked(questionsYear, question, livestream)">
+            <p class="body-1" @click.stop="questionClicked(questionsYear, livestreamIndex, questionIndex)">
               <v-icon color="primary">mdi-arrow-right</v-icon>
               {{ question.question }}
               <v-tooltip v-if="question.timelink" right>
@@ -93,9 +93,11 @@
 
       <SingleQuestionDialog
         :isopened.sync="isQuestionsDialogOpened"
-        :year="currentDialogYear"
-        :livestream="currentDialogLivestream"
-        :question="currentDialogQuestion" />
+        :year="currentQuestion.year"
+        :livestream="currentQuestion.livestream"
+        :question="currentQuestion.question"
+        @prevQuestion="prevQuestionInDialog"
+        @nextQuestion="nextQuestionInDialog" />
 
     </v-list>
 
@@ -133,11 +135,13 @@ export default {
       isLoadingQuestions: true,
       questions: QuestionsData,
       commonFunctions: CommonFunctions,
-      currentDialogYear: null,
-      currentDialogLivestream: null,
-      currentDialogLivestreamIndex: null,
-      currentDialogQuestion: null,
-      currentDialogQuestionIndex: null,
+      currentQuestion: {
+        "year": null,
+        "livestream": null,
+        "question": null
+      },
+      prevQuestion: null,
+      nextQuestion: null,
       isQuestionsDialogOpened: false
     }
   },
@@ -147,17 +151,29 @@ export default {
     this.isLoadingQuestions = false;
   },
   methods: {
-    questionClicked:  function(year, question, livestream) {
-      this.currentDialogYear = year;
-      this.currentDialogQuestion = question;
-      this.currentDialogLivestream = livestream;
+    questionClicked:  function(year, livestreamIndex, questionIndex) {
+      let q = this.questions.getQuestion(year, livestreamIndex, questionIndex);
+      let l = this.questions.getLivestream(year, livestreamIndex);
+      this.currentQuestion = {
+        "year": year,
+        "livestream": l,
+        "question": q,
+        "livestreamIndex": livestreamIndex,
+        "questionIndex": questionIndex
+      };
+      this.prevQuestion = this.questions.getPreviousQuestion(year, livestreamIndex, questionIndex);
       this.isQuestionsDialogOpened = true;
     },
-    next: function() {
+    nextQuestionInDialog: function() {
+      //TODO
 
     },
-    prev: function() {
-
+    prevQuestionInDialog: function() {
+      console.log("prev clikk");
+      let newPrevQuestion = this.questions.getPreviousQuestion(this.prevQuestion.year, this.prevQuestion.livestreamIndex, this.prevQuestion.questionIndex);
+      this.nextQuestion = this.currentQuestion;
+      this.currentQuestion = this.prevQuestion;
+      this.prevQuestion = newPrevQuestion;
     }
   },
   computed: {

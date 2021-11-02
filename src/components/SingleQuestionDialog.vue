@@ -14,6 +14,7 @@
               dark
               small
               color="grey"
+              @click.prevent="$emit('prevQuestion')"
             ><v-icon dark>
                 mdi-menu-left
               </v-icon>
@@ -81,7 +82,7 @@ export default {
     return {
       commonFunctions: CommonFunctions
     }
-  },
+  }
 }
 </script>
 

@@ -38,38 +38,50 @@ var QuestionsData = {
     });
 
   },
+  getQuestion: function(year, livestreamIndex, questionIndex) {
+    return this.getQuestions(year).livestreams[livestreamIndex].questions[questionIndex];
+  },
+  getLivestream: function(year, livestreamIndex) {
+    return this.getQuestions(year).livestreams[livestreamIndex];
+  },
   getPreviousQuestion: function(year, livestreamIndex, questionIndex) {
 
-    if(year == '2017' && livestreamIndex == 1 && questionIndex == 0)
-      return null;
+    if(year == '2017' && livestreamIndex == 0 && questionIndex == 0)
+      return {
+        "year": null,
+        "livestream": null,
+        "question": null,
+        "livestreamIndex": null,
+        "questionIndex": null
+      };
 
     let yearObject = this.getQuestions(year);
 
     let prevYear = year;
     let prevQuestionIndex = questionIndex - 1;
-    let prevLivestremIndex = livestreamIndex;
+    let prevLivestreamIndex = livestreamIndex;
 
     if(prevQuestionIndex < 0) {
-      prevLivestremIndex = prevLivestremIndex - 1;
+      prevLivestreamIndex = prevLivestreamIndex - 1;
 
-      if(prevLivestremIndex >= 0) {
-        prevQuestionIndex = yearObject.livestreams[prevLivestremIndex].length - 1;
+      if(prevLivestreamIndex >= 0) {
+        prevQuestionIndex = yearObject.livestreams[prevLivestreamIndex].questions.length - 1;
       }
       else {
         prevYear = this.getPreviousYear(year);
         let prevYearObject = this.getQuestions(prevYear);
-        prevLivestremIndex = prevYearObject.livestreams.length - 1;
-        prevQuestionIndex = prevYearObject.livestreams[prevLivestremIndex].questions.length - 1;
+        prevLivestreamIndex = prevYearObject.livestreams.length - 1;
+        prevQuestionIndex = prevYearObject.livestreams[prevLivestreamIndex].questions.length - 1;
       }
-
     }
 
     return {
       "year": prevYear,
-      "livestreamIndex": prevLivestremIndex,
+      "livestream": this.getLivestream(prevYear, prevLivestreamIndex),
+      "question": this.getQuestion(prevYear, prevLivestreamIndex, prevQuestionIndex),
+      "livestreamIndex": prevLivestreamIndex,
       "questionIndex": prevQuestionIndex
-    }
-
+    };
   },
   getPreviousYear: function(year) {
     if(year == '2020')
