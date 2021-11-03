@@ -11,11 +11,11 @@
           <v-col class="col-1 text-center">
             <v-btn
               fab
-              dark
               small
-              color="grey"
+              color="primary"
+              :disabled="!prevenabled"
               @click.prevent="$emit('prevQuestion')"
-            ><v-icon dark>
+            ><v-icon>
                 mdi-menu-left
               </v-icon>
             </v-btn>
@@ -31,12 +31,13 @@
           </v-col>
 
           <v-col class="col-1 text-center">
-              <v-btn
-                fab
-                dark
-                small
-                color="grey"
-              ><v-icon dark>
+            <v-btn
+              fab
+              small
+              color="primary"
+              :disabled="!nextenabled"
+              @click.prevent="$emit('nextQuestion')"
+              ><v-icon>
                 mdi-menu-right
               </v-icon>
             </v-btn>
@@ -77,7 +78,7 @@ import CommonFunctions from '@/questions/common-functions';
 
 export default {
   name: "SingleQuestionDialog",
-  props: ['isopened', 'year', 'livestream', 'question'],
+  props: ['isopened', 'year', 'livestream', 'question', 'prevenabled', 'nextenabled'],
   data() {
     return {
       commonFunctions: CommonFunctions
@@ -90,6 +91,11 @@ export default {
 
 .v-dialog {
   margin: 0
+}
+
+.v-btn--fab.v-btn--contained {
+    -webkit-box-shadow: none;
+    box-shadow: none
 }
 
 </style>

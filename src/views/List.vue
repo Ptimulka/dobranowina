@@ -96,6 +96,8 @@
         :year="currentQuestion.year"
         :livestream="currentQuestion.livestream"
         :question="currentQuestion.question"
+        :prevenabled="prevButtonEnabled"
+        :nextenabled="nextButtonEnabled"
         @prevQuestion="prevQuestionInDialog"
         @nextQuestion="nextQuestionInDialog" />
 
@@ -135,13 +137,9 @@ export default {
       isLoadingQuestions: true,
       questions: QuestionsData,
       commonFunctions: CommonFunctions,
-      currentQuestion: {
-        "year": null,
-        "livestream": null,
-        "question": null
-      },
-      prevQuestion: null,
-      nextQuestion: null,
+      currentQuestion: QuestionsData.getEmptyQuestionObject(),
+      prevQuestion: QuestionsData.getEmptyQuestionObject(),
+      nextQuestion: QuestionsData.getEmptyQuestionObject(),
       isQuestionsDialogOpened: false
     }
   },
@@ -170,6 +168,8 @@ export default {
     },
     prevQuestionInDialog: function() {
       console.log("prev clikk");
+      if(!this.prevQuestion.year) // if previous question is null, can't go to it
+        return;
       let newPrevQuestion = this.questions.getPreviousQuestion(this.prevQuestion.year, this.prevQuestion.livestreamIndex, this.prevQuestion.questionIndex);
       this.nextQuestion = this.currentQuestion;
       this.currentQuestion = this.prevQuestion;
@@ -177,6 +177,12 @@ export default {
     }
   },
   computed: {
+    prevButtonEnabled() {
+      return this.prevQuestion.year ? true : false;
+    },
+    nextButtonEnabled() {
+      return this.nextQuestion.year ? true : false;
+    }
   }
 }
 </script>

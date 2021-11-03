@@ -44,16 +44,19 @@ var QuestionsData = {
   getLivestream: function(year, livestreamIndex) {
     return this.getQuestions(year).livestreams[livestreamIndex];
   },
+  getEmptyQuestionObject: function() {
+    return {
+      "year": null,
+      "livestream": null,
+      "question": null,
+      "livestreamIndex": null,
+      "questionIndex": null
+    };
+  },
   getPreviousQuestion: function(year, livestreamIndex, questionIndex) {
 
     if(year == '2017' && livestreamIndex == 0 && questionIndex == 0)
-      return {
-        "year": null,
-        "livestream": null,
-        "question": null,
-        "livestreamIndex": null,
-        "questionIndex": null
-      };
+      return this.getEmptyQuestionObject();
 
     let yearObject = this.getQuestions(year);
 
