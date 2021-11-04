@@ -160,17 +160,27 @@ export default {
         "questionIndex": questionIndex
       };
       this.prevQuestion = this.questions.getPreviousQuestion(year, livestreamIndex, questionIndex);
+      this.nextQuestion = this.questions.getNextQuestion(year, livestreamIndex, questionIndex);
       this.isQuestionsDialogOpened = true;
     },
     nextQuestionInDialog: function() {
       //TODO
+      if(!this.nextQuestion.year) // if previous question is null, can't go to it
+        return;
+      let newNextQuestion = this.questions.getNextQuestion( this.nextQuestion.year,
+                                                            this.nextQuestion.livestreamIndex,
+                                                            this.nextQuestion.questionIndex );
+      this.prevQuestion = this.currentQuestion;
+      this.currentQuestion = this.nextQuestion;
+      this.nextQuestion = newNextQuestion;
 
     },
     prevQuestionInDialog: function() {
-      console.log("prev clikk");
       if(!this.prevQuestion.year) // if previous question is null, can't go to it
         return;
-      let newPrevQuestion = this.questions.getPreviousQuestion(this.prevQuestion.year, this.prevQuestion.livestreamIndex, this.prevQuestion.questionIndex);
+      let newPrevQuestion = this.questions.getPreviousQuestion( this.prevQuestion.year,
+                                                                this.prevQuestion.livestreamIndex,
+                                                                this.prevQuestion.questionIndex );
       this.nextQuestion = this.currentQuestion;
       this.currentQuestion = this.prevQuestion;
       this.prevQuestion = newPrevQuestion;
