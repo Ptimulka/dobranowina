@@ -3,6 +3,8 @@
     v-model="isopened"
     transition="dialog-bottom-transition"
     max-width="800"
+    @keydown.left="$emit('prevQuestion')"
+    @keydown.right="$emit('nextQuestion')"
   >
     <v-card v-if="question">
       <v-container fill-height fluid>
