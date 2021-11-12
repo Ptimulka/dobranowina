@@ -1,6 +1,7 @@
 <template>
   <v-dialog
-    v-model="isopened"
+    :value="isopened"
+    @input="$emit('update:isopened')"
     transition="dialog-bottom-transition"
     max-width="800"
     @keydown.left="$emit('prevQuestion')"
