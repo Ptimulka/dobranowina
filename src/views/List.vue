@@ -164,8 +164,7 @@ export default {
       this.isQuestionsDialogOpened = true;
     },
     nextQuestionInDialog: function() {
-      //TODO
-      if(!this.nextQuestion.year) // if previous question is null, can't go to it
+      if(!this.nextQuestion.year) // if next question is null, can't go to it
         return;
       let newNextQuestion = this.questions.getNextQuestion( this.nextQuestion.year,
                                                             this.nextQuestion.livestreamIndex,
