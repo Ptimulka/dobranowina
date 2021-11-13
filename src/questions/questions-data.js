@@ -37,6 +37,103 @@ var QuestionsData = {
       livestream.platform = livestream.link.includes("facebook") ? "FB" : "YT";
     });
 
+  },
+  getQuestion: function(year, livestreamIndex, questionIndex) {
+    return this.getQuestions(year).livestreams[livestreamIndex].questions[questionIndex];
+  },
+  getLivestream: function(year, livestreamIndex) {
+    return this.getQuestions(year).livestreams[livestreamIndex];
+  },
+  getEmptyQuestionObject: function() {
+    return {
+      "year": null,
+      "livestream": null,
+      "question": null,
+      "livestreamIndex": null,
+      "questionIndex": null
+    };
+  },
+  getPreviousQuestion: function(year, livestreamIndex, questionIndex) {
+
+    if(year == '2017' && livestreamIndex == 0 && questionIndex == 0)
+      return this.getEmptyQuestionObject();
+
+    let yearObject = this.getQuestions(year);
+
+    let prevYear = year;
+    let prevLivestreamIndex = livestreamIndex;
+    let prevQuestionIndex = questionIndex - 1;
+
+    if(prevQuestionIndex < 0) {
+      prevLivestreamIndex = prevLivestreamIndex - 1;
+
+      if(prevLivestreamIndex >= 0) {
+        prevQuestionIndex = yearObject.livestreams[prevLivestreamIndex].questions.length - 1;
+      }
+      else {
+        prevYear = this.getPreviousYear(year);
+        let prevYearObject = this.getQuestions(prevYear);
+        prevLivestreamIndex = prevYearObject.livestreams.length - 1;
+        prevQuestionIndex = prevYearObject.livestreams[prevLivestreamIndex].questions.length - 1;
+      }
+    }
+
+    return {
+      "year": prevYear,
+      "livestream": this.getLivestream(prevYear, prevLivestreamIndex),
+      "question": this.getQuestion(prevYear, prevLivestreamIndex, prevQuestionIndex),
+      "livestreamIndex": prevLivestreamIndex,
+      "questionIndex": prevQuestionIndex
+    };
+  },
+  getNextQuestion: function(year, livestreamIndex, questionIndex) {
+
+    let yearObject = this.getQuestions(year);
+    let livestreamObject = this.getLivestream(year, livestreamIndex);
+
+    if(year == '2021' && livestreamIndex == yearObject.livestreams.length - 1
+                      && questionIndex == livestreamObject.questions.length - 1)
+      return this.getEmptyQuestionObject();
+
+
+    let nextYear = year;
+    let nextLivestreamIndex = livestreamIndex;
+    let nextQuestionIndex = questionIndex + 1;
+
+    if(nextQuestionIndex > livestreamObject.questions.length - 1) {
+      nextLivestreamIndex = nextLivestreamIndex + 1;
+
+      if(nextLivestreamIndex <= yearObject.livestreams.length - 1) {
+        nextQuestionIndex = 0;
+      }
+      else {
+        nextYear = this.getNextYear(year);
+        nextLivestreamIndex = 0;
+        nextQuestionIndex = 0;
+      }
+    }
+
+    return {
+      "year": nextYear,
+      "livestream": this.getLivestream(nextYear, nextLivestreamIndex),
+      "question": this.getQuestion(nextYear, nextLivestreamIndex, nextQuestionIndex),
+      "livestreamIndex": nextLivestreamIndex,
+      "questionIndex": nextQuestionIndex
+    };
+  },
+  getPreviousYear: function(year) {
+    if(year == '2020')
+      return '2017';
+    if(year == '2021')
+      return '2020';
+    else return null;
+  },
+  getNextYear: function(year) {
+    if(year == '2017')
+      return '2020';
+    if(year == '2020')
+      return '2021';
+    else return null;
   }
 }
 
