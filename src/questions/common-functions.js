@@ -6,6 +6,10 @@ var CommonFunctions = {
     } else {
       return "red";
     }
+  },
+  isMobile: function() {
+    var mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    return mobile;
   }
 }
 
