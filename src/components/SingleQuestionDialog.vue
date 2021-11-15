@@ -9,11 +9,11 @@
   >
     <v-card v-if="question"
             v-touch="{
-              left: () => { if (prevenabled) {
+              left: () => { if (nextenabled) {
                   $emit('nextQuestion');
                   this.doesKnowAboutSwipePossibility=true;
                 } },
-              right: () => { if (nextenabled) {
+              right: () => { if (prevenabled) {
                   $emit('prevQuestion');
                   this.doesKnowAboutSwipePossibility=true;
                 } }
