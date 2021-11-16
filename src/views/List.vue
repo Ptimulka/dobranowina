@@ -19,7 +19,7 @@
         </template>
         <!-- dates -->
         <v-list-group sub-group
-          v-for="livestream in questions.getQuestions(questionsYear)['livestreams']"
+          v-for="(livestream, livestreamIndex) in questions.getQuestions(questionsYear)['livestreams']"
           :key="'listitemsub' + livestream.date">
 
           <template v-slot:activator>
@@ -66,12 +66,12 @@
           </template>
           <!-- questions -->
           <v-list-item
-            v-for="question in livestream['questions']"
+            v-for="(question, questionIndex) in livestream['questions']"
             :key="'listitemsubsub' + question.question"
             class="pointercursor"
           >
 
-            <p class="body-1" @click.stop="questionClicked(questionsYear, question, livestream)">
+            <p class="body-1" @click.stop="questionClicked(questionsYear, livestreamIndex, questionIndex)">
               <v-icon color="primary">mdi-arrow-right</v-icon>
               {{ question.question }}
               <v-tooltip v-if="question.timelink" right>
@@ -93,9 +93,13 @@
 
       <SingleQuestionDialog
         :isopened.sync="isQuestionsDialogOpened"
-        :year="currentDialogYear"
-        :livestream="currentDialogLivestream"
-        :question="currentDialogQuestion" />
+        :year="currentQuestion.year"
+        :livestream="currentQuestion.livestream"
+        :question="currentQuestion.question"
+        :prevenabled="prevButtonEnabled"
+        :nextenabled="nextButtonEnabled"
+        @prevQuestion="prevQuestionInDialog"
+        @nextQuestion="nextQuestionInDialog" />
 
     </v-list>
 
@@ -133,9 +137,9 @@ export default {
       isLoadingQuestions: true,
       questions: QuestionsData,
       commonFunctions: CommonFunctions,
-      currentDialogYear: null,
-      currentDialogLivestream: null,
-      currentDialogQuestion: null,
+      currentQuestion: QuestionsData.getEmptyQuestionObject(),
+      prevQuestion: QuestionsData.getEmptyQuestionObject(),
+      nextQuestion: QuestionsData.getEmptyQuestionObject(),
       isQuestionsDialogOpened: false
     }
   },
@@ -145,14 +149,49 @@ export default {
     this.isLoadingQuestions = false;
   },
   methods: {
-    questionClicked:  function(year, question, livestream) {
-      this.currentDialogYear = year;
-      this.currentDialogQuestion = question;
-      this.currentDialogLivestream = livestream;
+    questionClicked:  function(year, livestreamIndex, questionIndex) {
+      let q = this.questions.getQuestion(year, livestreamIndex, questionIndex);
+      let l = this.questions.getLivestream(year, livestreamIndex);
+      this.currentQuestion = {
+        "year": year,
+        "livestream": l,
+        "question": q,
+        "livestreamIndex": livestreamIndex,
+        "questionIndex": questionIndex
+      };
+      this.prevQuestion = this.questions.getPreviousQuestion(year, livestreamIndex, questionIndex);
+      this.nextQuestion = this.questions.getNextQuestion(year, livestreamIndex, questionIndex);
       this.isQuestionsDialogOpened = true;
+    },
+    nextQuestionInDialog: function() {
+      if(!this.nextQuestion.year) // if next question is null, can't go to it
+        return;
+      let newNextQuestion = this.questions.getNextQuestion( this.nextQuestion.year,
+                                                            this.nextQuestion.livestreamIndex,
+                                                            this.nextQuestion.questionIndex );
+      this.prevQuestion = this.currentQuestion;
+      this.currentQuestion = this.nextQuestion;
+      this.nextQuestion = newNextQuestion;
+
+    },
+    prevQuestionInDialog: function() {
+      if(!this.prevQuestion.year) // if previous question is null, can't go to it
+        return;
+      let newPrevQuestion = this.questions.getPreviousQuestion( this.prevQuestion.year,
+                                                                this.prevQuestion.livestreamIndex,
+                                                                this.prevQuestion.questionIndex );
+      this.nextQuestion = this.currentQuestion;
+      this.currentQuestion = this.prevQuestion;
+      this.prevQuestion = newPrevQuestion;
     }
   },
   computed: {
+    prevButtonEnabled() {
+      return this.prevQuestion.year ? true : false;
+    },
+    nextButtonEnabled() {
+      return this.nextQuestion.year ? true : false;
+    }
   }
 }
 </script>
