@@ -100,7 +100,7 @@ export default {
         { sortByText: 'Od najnowszych', abbr: 'latest' },
         { sortByText: 'Od najstarszych', abbr: 'oldest' },
       ],
-      questionsYearsToLoad: ['2017','2020','2021'],
+      questionsYearsToLoad: ['2017','2020','2021','2022'],
       isLoadingQuestions: true,
       questions: QuestionsData,
       allQuestionsNumber: 0,

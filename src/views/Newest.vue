@@ -53,8 +53,9 @@ import QuestionsData from '@/questions/questions-data';
 export default {
   data() {
     return {
-      questionsYearsToLoad: ['2017','2020','2021'],
-      lastYear: '2021',
+      questionsYearsToLoad: ['2017','2020','2021','2022'],
+      lastYear: '2022',
+      lastLastYear: '2021',
       showLastN: 12,
       listQuestionsForEachLivestreamN: 7,
       isLoadingQuestions: true,
@@ -75,7 +76,12 @@ export default {
       }
       else {
         let newest = this.questions.getQuestions(this.lastYear)['livestreams'];
-        return newest.slice(-this.showLastN).reverse()
+        if(newest.length < this.showLastN) {
+          let prevYear = this.questions.getQuestions(this.lastLastYear)['livestreams'].slice(newest.length - this.showLastN).reverse();
+          let currYear = newest.reverse();
+          return currYear.concat(prevYear);
+        }
+        else return newest.slice(-this.showLastN).reverse()
       }
     }
   }

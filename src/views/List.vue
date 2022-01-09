@@ -133,7 +133,7 @@ export default {
   },
   data() {
     return {
-      questionsYearsToLoad: ['2017','2020','2021'],
+      questionsYearsToLoad: ['2017','2020','2021','2022'],
       isLoadingQuestions: true,
       questions: QuestionsData,
       commonFunctions: CommonFunctions,
