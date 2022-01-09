@@ -19,7 +19,8 @@ var QuestionsData = {
   allQuestions: {
     'q2017': null,
     'q2020': null,
-    'q2021': null
+    'q2021': null,
+    'q2022': null
   },
   getQuestions: function(year) {
     let qyear = 'q' + year;
