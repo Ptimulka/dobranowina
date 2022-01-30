@@ -78,7 +78,7 @@ export default {
         let newest = this.questions.getQuestions(this.lastYear)['livestreams'];
         if(newest.length < this.showLastN) {
           let prevYear = this.questions.getQuestions(this.lastLastYear)['livestreams'].slice(newest.length - this.showLastN).reverse();
-          let currYear = newest.reverse();
+          let currYear = [...newest].reverse();
           return currYear.concat(prevYear);
         }
         else return newest.slice(-this.showLastN).reverse()
