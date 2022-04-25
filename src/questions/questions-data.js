@@ -1,6 +1,9 @@
 import todoLivestreams from "@/assets/questions/todo.json";
 import topWords from "@/assets/questions/topWords.json";
 
+const firstYear = 2017;
+const lastYear = 2022;
+
 var QuestionsData = {
 
   todos: todoLivestreams,
@@ -56,7 +59,7 @@ var QuestionsData = {
   },
   getPreviousQuestion: function(year, livestreamIndex, questionIndex) {
 
-    if(year == '2017' && livestreamIndex == 0 && questionIndex == 0)
+    if(year == firstYear && livestreamIndex == 0 && questionIndex == 0)
       return this.getEmptyQuestionObject();
 
     let yearObject = this.getQuestions(year);
@@ -92,7 +95,7 @@ var QuestionsData = {
     let yearObject = this.getQuestions(year);
     let livestreamObject = this.getLivestream(year, livestreamIndex);
 
-    if(year == '2021' && livestreamIndex == yearObject.livestreams.length - 1
+    if(year == lastYear && livestreamIndex == yearObject.livestreams.length - 1
                       && questionIndex == livestreamObject.questions.length - 1)
       return this.getEmptyQuestionObject();
 
@@ -125,15 +128,15 @@ var QuestionsData = {
   getPreviousYear: function(year) {
     if(year == '2020')
       return '2017';
-    if(year == '2021')
-      return '2020';
+    else if(year > firstYear)
+      return (parseInt(year) - 1).toString();
     else return null;
   },
   getNextYear: function(year) {
     if(year == '2017')
       return '2020';
-    if(year == '2020')
-      return '2021';
+    else if(year < lastYear)
+        return (parseInt(year) + 1).toString();
     else return null;
   }
 }
