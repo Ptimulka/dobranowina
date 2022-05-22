@@ -88,6 +88,9 @@
               </v-tooltip>
             </p>
           </v-list-item>
+          <v-list-item v-if="livestream.prayer">
+            <v-sheet class="pa-6 rounded" color="indigo lighten-4"> <b>Modlitwa</b>: {{ livestream.prayer }}</v-sheet>
+          </v-list-item>
         </v-list-group>
       </v-list-group>
 
