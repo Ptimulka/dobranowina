@@ -1,15 +1,13 @@
-const https = require('https');
+const axios = require('axios');
 
 const familiesUrl = 'https://polishwordfamilies.herokuapp.com/wordfamilies/';
 
 var SearchHelper = {
 
   sendDummyRequestToWakeUpWordFamiliesWebsite: function() {
-    https.get(familiesUrl + "Jezus", () => {
-      return null;
-    }).on("error", (err) => {
-      console.log("Error: " + err.message);
-    });
+    axios.default.get(familiesUrl + "Jezus")
+                 .then(response => {return response})
+                 .catch(error => console.log(error));
   },
 
   getRegexpsForQuery: function(query, searchExactPhase, continueSearchingCallback) {
@@ -21,24 +19,21 @@ var SearchHelper = {
 
     let stopwords = ["czy", "kto", "jak"];
 
-    let words = query.toLowerCase().split(/[\s,.;]+/).
-      filter(word => word.length>2).
-      filter(word => !stopwords.includes(word));
+    let words = query.toLowerCase().split(/[\s,.;]+/)
+      .filter(word => word.length>2)
+      .filter(word => !stopwords.includes(word));
+
     if(words.length == 0) {
       continueSearchingCallback(null);
       return;
     }
+
     let allWordsStringWithCommas = words.join(',');
 
-    https.get(familiesUrl + allWordsStringWithCommas, (resp) => {
-      let data = '';
-      resp.on('data', (chunk) => {
-        data += chunk;
-      });
-      resp.on('end', () => {
-        let answer = JSON.parse(data);
+    axios.default.get(familiesUrl + allWordsStringWithCommas)
+      .then(response => {
 
-        let allWordsResults = Object.values(answer).flatMap(arr => {
+        let allWordsResults = Object.values(response.data).flatMap(arr => {
           return arr;
         });
 
@@ -68,15 +63,9 @@ var SearchHelper = {
           return new RegExp(previousValue.source + "|" + currentValue.source, "ig");
         });
         continueSearchingCallback(regexpsMerged);
-      });
-
-    }).on("error", (err) => {
-      console.log("Error: " + err.message);
-      let regexps = words.map(word => {
-        return new RegExp(word, "ig");
       })
-      continueSearchingCallback(regexps);
-    });
+    .catch(error => console.log(error));
+
   }
 }
 
