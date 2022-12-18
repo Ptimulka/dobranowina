@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const familiesUrl = 'https://polishwordfamilies.herokuapp.com/wordfamilies/';
+const familiesUrl = 'https://polishwordfamilies.netlify.app/.netlify/functions/api/wordfamilies/';
 
 var SearchHelper = {
 
