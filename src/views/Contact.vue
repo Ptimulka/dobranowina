@@ -25,7 +25,7 @@
     </div>
     <v-card>
       <h1 class="py-5 title text-center">Z Mikołajem</h1>
-      <h3 class="py-5 px-5 subtitle-2 text-center">Najlepiej zadać pytanie Mikołajowi podczas livestreamu, obecnie są one w poniedziałki o godzinie 19 na Youtubie na kanale Mikołaj Kapusta.</h3>
+      <h3 class="py-5 px-5 subtitle-2 text-center">Najlepiej zadać pytanie Mikołajowi podczas livestreamu, obecnie są one w poniedziałki o godzinie 19 na Youtubie na kanale Dobra Nowina.</h3>
       <h3 class="py-5 px-5 subtitle-2 text-center">Można równiez napisać do niego e-mail: dobranowina.net@gmail.com</h3>
       <h1 class="py-5 title text-center">Z autorką strony</h1>
       <h3 class="py-5 px-5 subtitle-2 text-center">Napisz na: qanda.dobranowina@outlook.com</h3>
