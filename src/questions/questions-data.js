@@ -2,7 +2,7 @@ import todoLivestreams from "@/assets/questions/todo.json";
 import topWords from "@/assets/questions/topWords.json";
 
 const firstYear = 2017;
-const lastYear = 2023;
+const lastYear = 2024;
 
 var QuestionsData = {
 
@@ -24,7 +24,8 @@ var QuestionsData = {
     'q2020': null,
     'q2021': null,
     'q2022': null,
-    'q2023': null
+    'q2023': null,
+    'q2024': null
   },
   getQuestions: function(year) {
     let qyear = 'q' + year;
