@@ -53,9 +53,9 @@ import QuestionsData from '@/questions/questions-data';
 export default {
   data() {
     return {
-      questionsYearsToLoad: ['2017','2020','2021','2022','2023'],
-      lastYear: '2023',
-      lastLastYear: '2022',
+      questionsYearsToLoad: ['2023','2024'],
+      lastYear: '2024',
+      lastLastYear: '2023',
       showLastN: 12,
       listQuestionsForEachLivestreamN: 7,
       isLoadingQuestions: true,
