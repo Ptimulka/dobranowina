@@ -9,7 +9,7 @@
           <v-text-field
               hide-details
               solo
-              placeholder="Wpisz np. 'modlitwa'"
+              placeholder="Wpisz słowa kluczowe np. 'modlitwa'"
               prepend-icon="mdi-magnify"
               class="my-1"
               v-model="searchQuery"
